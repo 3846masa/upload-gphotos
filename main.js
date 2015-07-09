@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var ProgressBar = require('progress');
 var co = require('co');
 var thunkify = require('thunkify');
 var request = require('co-request');
@@ -119,8 +120,27 @@ co(function* () {
 
     var sendUrl = serverStatus.sessionStatus.externalFieldTransfers[0].putInfo.url;
 
+    var progressBar = new ProgressBar('Uploading [:bar] :percent :etas', {
+      complete: '=',
+      incomplete: ' ',
+      width: Math.max(0, process.stdout.columns - 25),
+      total: fs.statSync(filepath).size
+    });
+
+    var fileReadStream = fs.createReadStream(filepath);
+    fileReadStream.on('open', function() {
+      console.warn('');
+    });
+    fileReadStream.on('data', function(chunk) {
+      progressBar.width = Math.max(0, process.stdout.columns - 25);
+      progressBar.tick(chunk.length);
+    });
+    fileReadStream.on('end', function() {
+      console.warn('');
+    });
+
     var resultRes = yield pipeRequest(
-      fs.createReadStream(filepath),
+      fileReadStream,
       request({
         method: 'POST',
         url: sendUrl,

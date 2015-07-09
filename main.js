@@ -50,8 +50,8 @@ request = request.defaults({
 });
 
 co(function* () {
-  username = username || (yield read({ prompt: 'Username: ' }));
-  password = password || (yield read({ prompt: 'Password: ', silent: true }));
+  username = username || (yield read({ prompt: 'Username: ', output: process.stderr }));
+  password = password || (yield read({ prompt: 'Password: ', output: process.stderr, silent: true }));
 
   var loginUrl = 'https://accounts.google.com/ServiceLoginAuth?service=lh2';
   yield request.get(loginUrl);

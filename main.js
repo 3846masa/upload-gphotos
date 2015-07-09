@@ -84,7 +84,7 @@ co(function* () {
 
   var sendInfo = JSON.parse(fs.readFileSync('sendRequest.json', 'utf8'));
 
-  var upload = co.wrap(function*(filepath) {
+  var upload = function* (filepath) {
     sendInfo.createSessionRequest.fields.forEach(function(field){
       if ('external' in field) {
         field.external.filename = path.basename(filepath);
@@ -131,13 +131,13 @@ co(function* () {
       })
     );
 
-    console.warn('');
     console.info(resultRes.body);
-  });
+  };
 
-  ARGV.forEach(function(filepath) {
-    upload(filepath).catch(function (err){ throw err; });
-  });
+  for (var _i = 0; _i < ARGV.length; _i++) {
+    var filepath = ARGV[_i];
+    yield upload(filepath);
+  }
 }).catch(function (err) {
   console.error(err.stack);
 });

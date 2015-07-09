@@ -6,7 +6,7 @@ nexe.compile(
     output: './upload-gphotos',
     nodeVersion: 'latest',
     nodeTempDir: './tmp/nexe',
-    flags: false,
+    flags: true,
     resourceFiles: ["./sendRequest.json"],
     python: 'python',
     framework: 'io.js'

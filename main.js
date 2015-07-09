@@ -19,7 +19,7 @@ var read = function* (){
 var argParser = require('yargs');
 
 argParser.demand(1);
-argParser.usage('Usage: $0 [file]');
+argParser.usage('Usage: ' + path.basename(process.execPath) + ' [-u username] [-p password] file [...]');
 argParser.options('u', {
 	alias: 'username',
 	desc: 'Google account username.',
@@ -28,6 +28,7 @@ argParser.options('p', {
 	alias: 'password',
 	desc: 'Google account password.',
 });
+argParser.help('h').alias('h', 'help');
 
 var ARGV = argParser.argv;
 var username = ARGV.u;

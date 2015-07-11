@@ -15,7 +15,8 @@ co(function* () {
   var password = yield read({ prompt: 'Password: ', output: process.stderr, silent: true });
   var gphotos = new GPhotos(username, password, { thunkify : true });
   yield gphotos.login();
-  console.log('here');
+  var album = yield gphotos.searchAlbum("6169149089637008385");
+  console.log(album);
 }).catch(function (err) {
   console.error(err.stack);
 });

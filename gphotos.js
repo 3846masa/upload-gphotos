@@ -1,6 +1,7 @@
 'use strict';
 
 var colors = require('colors');
+var xml2js = require('xml2js');
 var fs = require('fs');
 var path = require('path');
 var ProgressBar = require('progress');
@@ -48,6 +49,7 @@ GPhotos.prototype.init = function() {
 
   if (self.options.thunkify === true) {
     self.login = thunkify(self.login.bind(self));
+    self.searchAlbum = thunkify(self.searchAlbum.bind(self));
   }
 };
 
@@ -86,6 +88,44 @@ GPhotos.prototype.login = function(cb) {
 
     return true;
   }).then(function() {
+    var args = [null];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args.push(arguments[_i]);
+    }
+    cb.apply(self, args);
+  }).catch(function (){
+    cb.apply(self, arguments);
+  });
+};
+
+GPhotos.prototype.searchAlbum = function(albumName, cb) {
+  var self = this;
+  albumName = albumName.toString();
+
+  co(function* (){
+    var albumListRssUrl =
+      'https://picasaweb.google.com/data/feed/api/user/' + self.userId + '?alt=rss&kind=album&hl=ja';
+    var albumListRss = yield self.request.get(albumListRssUrl);
+
+    var parser = new xml2js.Parser({ explicitArray : false });
+    parser.parseString = thunkify(parser.parseString);
+    var albumListJSON = yield parser.parseString(albumListRss.body);
+    var albumList = albumListJSON.rss.channel.item;
+
+    var albumInfo = null;
+    albumList.forEach(function(info) {
+      if (albumInfo !== null) return;
+      var isFound = info.title === albumName ||
+                    info['gphoto:name'] === albumName ||
+                    ( albumName.match(/^\d+$/) &&
+                      info['gphoto:id'] === albumName );
+      if (isFound) {
+        albumInfo = info;
+      }
+    });
+
+    return albumInfo;
+  }).then(function(albumInfo) {
     var args = [null];
     for (var _i = 0; _i < arguments.length; _i++) {
       args.push(arguments[_i]);

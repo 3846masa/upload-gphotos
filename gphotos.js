@@ -87,7 +87,7 @@ GPhotos.prototype.login = function(cb) {
     return true;
   }).then(function() {
     var args = [null];
-    for (var _i = 0; arguments.length < _i; _i++) {
+    for (var _i = 0; _i < arguments.length; _i++) {
       args.push(arguments[_i]);
     }
     cb.apply(self, args);

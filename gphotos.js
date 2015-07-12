@@ -204,4 +204,43 @@ GPhotos.prototype.createAlbum = function(albumName, cb) {
   });
 };
 
+GPhotos.prototype.moveItem = function(itemId, itemAlbumId, newAlbumId, cb) {
+  var self = this;
+
+  co(function* (){
+    var picasaHome = yield self.request.get('https://picasaweb.google.com/home');
+    if (! picasaHome.body.match(/var _copyOrMovePath = '(.*?)'/)) {
+      throw new Error('_copyOrMovePath is not found.');
+    }
+    var createUrl = RegExp.$1;
+
+    var createQuery = yield self.request({
+      method: 'POST',
+      url: 'https://picasaweb.google.com/' + createUrl,
+      form: {
+        redir: '',
+        dest: '',
+        photoop: 'move',
+        selectedphotos: itemId,
+        srcAid: itemAlbumId,
+        albumop: 'existing',
+        aid: newAlbumId,
+        uname: self.userId,
+      },
+    });
+
+    if (createQuery.statusCode !== 302) {
+      throw new Error('MoveItemError');
+    }
+  }).then(function() {
+    var args = [null];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args.push(arguments[_i]);
+    }
+    cb.apply(self, args);
+  }).catch(function (){
+    cb.apply(self, arguments);
+  });
+};
+
 module.exports = GPhotos;

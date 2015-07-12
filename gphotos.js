@@ -50,6 +50,7 @@ GPhotos.prototype.init = function() {
   if (self.options.thunkify === true) {
     self.login = thunkify(self.login.bind(self));
     self.searchAlbum = thunkify(self.searchAlbum.bind(self));
+    self.createAlbum = thunkify(self.createAlbum.bind(self));
   }
 };
 
@@ -116,7 +117,7 @@ GPhotos.prototype.searchAlbum = function(albumName, cb) {
         yield self.request.get(albumListRssUrl + '&start-index=' + cursor);
 
       var albumListJSON = yield parser.parseString(albumListRss.body);
-      var  albumList = albumListJSON.rss.channel.item;
+      var albumList = albumListJSON.rss.channel.item;
       if (albumList === undefined || albumList.length === 0) break;
       cursor += albumList.length;
 
@@ -135,6 +136,63 @@ GPhotos.prototype.searchAlbum = function(albumName, cb) {
     }
 
     return albumInfo;
+  }).then(function(albumInfo) {
+    var args = [null];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args.push(arguments[_i]);
+    }
+    cb.apply(self, args);
+  }).catch(function (){
+    cb.apply(self, arguments);
+  });
+};
+
+GPhotos.prototype.createAlbum = function(albumName, cb) {
+  var self = this;
+  albumName = albumName.toString();
+
+  co(function*() {
+    var picasaHome = yield self.request.get('https://picasaweb.google.com/home');
+    if (! picasaHome.body.match(/var _createAlbumPath = '(.*?)'/)) {
+      throw new Error('_createAlbumPath is not found.');
+    }
+    var createUrl = RegExp.$1;
+
+    var createQuery = yield self.request({
+      method: 'POST',
+      url: 'https://picasaweb.google.com/' + createUrl,
+      form: {
+        uname: self.userId,
+        title: albumName,
+        access: 'only_you',
+        description: '',
+        location: '',
+        date: (function(d){
+            return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+          })(new Date())
+      },
+    });
+
+    if (createQuery.statusCode !== 302) {
+      throw new Error('CreateAlbumError');
+    }
+
+    var albumUniqueName = createQuery.headers.location.split('/').reverse()[0];
+    var albumInfoRSS = yield self.request.get(
+      'https://picasaweb.google.com/data/feed/api/user/' + self.userId +
+      '/album/' + albumUniqueName + '?alt=rss');
+
+    var parser = new xml2js.Parser({ explicitArray : false });
+    parser.parseString = thunkify(parser.parseString);
+    var albumInfoJSON = yield parser.parseString(albumInfoRSS.body);
+    var albumId = albumInfoJSON.rss.channel['gphoto:id'];
+
+    console.warn("AlbumID is %s.", albumId);
+    if (self.options.thunkify === false) {
+      return yield thunkify(self.searchAlbum)(albumId);
+    } else {
+      return yield self.searchAlbum(albumId);
+    }
   }).then(function(albumInfo) {
     var args = [null];
     for (var _i = 0; _i < arguments.length; _i++) {

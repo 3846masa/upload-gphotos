@@ -105,24 +105,34 @@ GPhotos.prototype.searchAlbum = function(albumName, cb) {
   co(function* (){
     var albumListRssUrl =
       'https://picasaweb.google.com/data/feed/api/user/' + self.userId + '?alt=rss&kind=album&hl=ja';
-    var albumListRss = yield self.request.get(albumListRssUrl);
 
     var parser = new xml2js.Parser({ explicitArray : false });
     parser.parseString = thunkify(parser.parseString);
-    var albumListJSON = yield parser.parseString(albumListRss.body);
-    var albumList = albumListJSON.rss.channel.item;
 
     var albumInfo = null;
-    albumList.forEach(function(info) {
-      if (albumInfo !== null) return;
-      var isFound = info.title === albumName ||
-                    info['gphoto:name'] === albumName ||
-                    ( albumName.match(/^\d+$/) &&
-                      info['gphoto:id'] === albumName );
-      if (isFound) {
-        albumInfo = info;
-      }
-    });
+    var cursor = 1;
+    while (true) {
+      var albumListRss =
+        yield self.request.get(albumListRssUrl + '&start-index=' + cursor);
+
+      var albumListJSON = yield parser.parseString(albumListRss.body);
+      var  albumList = albumListJSON.rss.channel.item;
+      if (albumList === undefined || albumList.length === 0) break;
+      cursor += albumList.length;
+
+      albumList.forEach(function(info) {
+        if (albumInfo !== null) return;
+        var isFound = info.title === albumName ||
+                      info['gphoto:name'] === albumName ||
+                      ( albumName.match(/^\d+$/) &&
+                        info['gphoto:id'] === albumName );
+        if (isFound) {
+          albumInfo = info;
+        }
+      });
+
+      if (albumInfo !== null) break;
+    }
 
     return albumInfo;
   }).then(function(albumInfo) {

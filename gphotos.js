@@ -51,6 +51,9 @@ GPhotos.prototype.init = function() {
     self.login = thunkify(self.login.bind(self));
     self.searchAlbum = thunkify(self.searchAlbum.bind(self));
     self.createAlbum = thunkify(self.createAlbum.bind(self));
+    self.getAlbum = thunkify(self.getAlbum.bind(self));
+    self.moveItem = thunkify(self.moveItem.bind(self));
+    self.upload = thunkify(self.upload.bind(self));
   }
 };
 
@@ -204,6 +207,31 @@ GPhotos.prototype.createAlbum = function(albumName, cb) {
   });
 };
 
+GPhotos.prototype.getAlbum = function(albumName, cb) {
+  var self = this;
+
+  co(function*() {
+    var albumInfo;
+    if (self.options.thunkify === false) {
+      albumInfo =
+        (yield thunkify(self.searchAlbum)(albumName)) ||
+        (yield thunkify(self.createAlbum)(albumName));
+    } else {
+      albumInfo =
+        (yield self.searchAlbum(albumName)) || (yield self.createAlbum(albumName));
+    }
+    return albumInfo;
+  }).then(function(albumInfo) {
+    var args = [null];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args.push(arguments[_i]);
+    }
+    cb.apply(self, args);
+  }).catch(function (){
+    cb.apply(self, arguments);
+  });
+}
+
 GPhotos.prototype.moveItem = function(itemId, itemAlbumId, newAlbumId, cb) {
   var self = this;
 
@@ -212,26 +240,127 @@ GPhotos.prototype.moveItem = function(itemId, itemAlbumId, newAlbumId, cb) {
     if (! picasaHome.body.match(/var _copyOrMovePath = '(.*?)'/)) {
       throw new Error('_copyOrMovePath is not found.');
     }
-    var createUrl = RegExp.$1;
+    var moveUrl = RegExp.$1;
 
-    var createQuery = yield self.request({
+    var moveQuery = yield self.request({
       method: 'POST',
-      url: 'https://picasaweb.google.com/' + createUrl,
+      url: 'https://picasaweb.google.com/' + moveUrl,
       form: {
+        uname: self.userId,
         redir: '',
         dest: '',
         photoop: 'move',
         selectedphotos: itemId,
         srcAid: itemAlbumId,
         albumop: 'existing',
-        aid: newAlbumId,
-        uname: self.userId,
+        aid: newAlbumId
       },
     });
 
-    if (createQuery.statusCode !== 302) {
+    if (moveQuery.statusCode !== 302) {
       throw new Error('MoveItemError');
     }
+  }).then(function() {
+    var args = [null];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args.push(arguments[_i]);
+    }
+    cb.apply(self, args);
+  }).catch(function (){
+    cb.apply(self, arguments);
+  });
+};
+
+GPhotos.prototype.upload = function(/*filePath, [fileName,] cb*/) {
+  var self = this;
+  var filePath = arguments[0];
+  var cb, fileName;
+  if (arguments.length === 2) {
+    fileName = path.basename(filePath);
+    cb = arguments[1];
+  } else {
+    fileName = arguments[1];
+    cb = arguments[2];
+  }
+
+  if (!fs.existsSync(filePath)) {
+    cb(new Error(filePath + ' isn\'t exist.'));
+    return;
+  }
+
+  co(function*() {
+    var sendInfo = JSON.parse(fs.readFileSync('sendRequest.json', 'utf8'));
+    sendInfo.createSessionRequest.fields.forEach(function(field){
+      if ('external' in field) {
+        field.external.filename = fileName;
+        field.external.size = fs.statSync(filePath).size;
+      } else if ('inlined' in field) {
+        var name = field.inlined.name;
+        if (name !== 'effective_id' && name !== 'owner_name') return;
+        field.inlined.content = self.userId;
+      }
+    });
+
+    var serverStatusRes = yield self.request({
+      method: 'POST',
+      url: 'https://photos.google.com/_/upload/photos/resumable?authuser=0',
+      body: JSON.stringify(sendInfo),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+    });
+
+    if (serverStatusRes.statusCode !== 200) {
+      throw new Error('ServerError');
+    }
+
+    var serverStatus = JSON.parse(serverStatusRes.body);
+    if (!('sessionStatus' in serverStatus)) {
+      throw new Error('ServerError');
+    }
+
+    var sendUrl = serverStatus.sessionStatus.externalFieldTransfers[0].putInfo.url;
+
+    var progressBar = new ProgressBar('Uploading [:bar] :percent :etas', {
+      complete: '=',
+      incomplete: ' ',
+      width: Math.max(0, process.stdout.columns - 25),
+      total: fs.statSync(filePath).size
+    });
+
+    var fileReadStream = fs.createReadStream(filePath);
+    fileReadStream.on('open', function() {
+      console.warn('');
+    });
+    fileReadStream.on('data', function(chunk) {
+      progressBar.tick(chunk.length);
+    });
+    fileReadStream.on('end', function() {
+      console.warn('');
+    });
+
+    var resultRes = yield pipeRequest(
+      fileReadStream,
+      self.request({
+        method: 'POST',
+        url: sendUrl,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'X-HTTP-Method-Override': 'PUT'
+        }
+      })
+    );
+
+    var result = JSON.parse(resultRes.body);
+    if (result.sessionStatus.state !== 'FINALIZED') {
+      throw new Error('UploadError');
+    }
+    var uploadInfo = result.sessionStatus
+                           .additionalInfo
+                           ['uploader_service.GoogleRupioAdditionalInfo']
+                           .completionInfo
+                           .customerSpecificInfo;
+    return uploadInfo;
   }).then(function() {
     var args = [null];
     for (var _i = 0; _i < arguments.length; _i++) {

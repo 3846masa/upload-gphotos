@@ -1,8 +1,8 @@
 {
   "name": "upload-gphotos",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Google Photos にファイルをアップロード",
-  "main": "main.js",
+  "main": "gphotos.js",
   "dependencies": {
     "co": "^4.5.4",
     "co-request": "^0.2.1",
@@ -12,6 +12,7 @@
     "request": "^2.58.0",
     "thunkify": "^2.1.2",
     "tough-cookie": "^2.0.0",
+    "xml2js": "^0.4.9",
     "yargs": "^3.15.0"
   },
   "devDependencies": {},

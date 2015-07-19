@@ -18,6 +18,22 @@ var read = function*() {
   var results = yield thunkify(_readOriginal).apply(this, arguments);
   return results[0];
 };
+var heredoc = function(fn){
+  var results = fn.toString().match(/\/\*([\s\S]*)\*\//);
+  return (results !== null) ? results[1] : '';
+};
+
+var sendInfo = JSON.parse(heredoc(function(){/*
+  {"protocolVersion":"0.8","createSessionRequest":{"fields":[
+  {"external":{"name":"file","filename":"","put":{},"size":0}},
+  {"inlined":{"name":"auto_create_album","content":"camera_sync.active","contentType":"text/plain"}},
+  {"inlined":{"name":"auto_downsize","content":"true","contentType":"text/plain"}},
+  {"inlined":{"name":"storage_policy","content":"use_manual_setting","contentType":"text/plain"}},
+  {"inlined":{"name":"disable_asbe_notification","content":"true","contentType":"text/plain"}},
+  {"inlined":{"name":"client","content":"photosweb","contentType":"text/plain"}},
+  {"inlined":{"name":"effective_id","content":"","contentType":"text/plain"}},
+  {"inlined":{"name":"owner_name","content":"","contentType":"text/plain"}}]}}
+*/}));
 
 var GPhotos = function(username, password, options) {
   var self = this;
@@ -289,7 +305,6 @@ GPhotos.prototype.upload = function(/*filePath, [fileName,] cb*/) {
   }
 
   co(function*() {
-    var sendInfo = JSON.parse(fs.readFileSync('sendRequest.json', 'utf8'));
     sendInfo.createSessionRequest.fields.forEach(function(field){
       if ('external' in field) {
         field.external.filename = fileName;

@@ -1,14 +1,11 @@
 import packageInfo from '../package.json';
 import reqJSONTemplateGenerator from './request-json-template-generator';
 
-import XMLParser from './xml-parser';
 import winston, { Logger } from 'winston';
 import request from 'request-promise';
 import fs from 'fs-promise';
 import ProgressBar from 'progress';
-import url from 'url';
 import path from 'path';
-import moment from 'moment';
 import colors from 'colors/safe';
 import jsdom from './jsdom-async';
 import JSON from './json-async';
@@ -240,6 +237,7 @@ class GPhotos {
     });
 
     if (queryRes.statusCode !== 200) {
+      this._logger.error(`Failed to remove photo. ${queryRes.statusMessage}`);
       return Promise.reject(new Error(`Failed to remove photo. ${queryRes.statusMessage}`));
     }
     return true;
@@ -274,37 +272,40 @@ class GPhotos {
       .catch(() => this.createAlbum(albumName));
   }
 
-  async moveItem (itemId, itemAlbumId, newAlbumId) {
-    const picasaHome = await this._request.get('https://picasaweb.google.com/home');
-    if (!picasaHome.body.match(/var _copyOrMovePath = '.*?'/)) {
-      this._logger.error('_copyOrMovePath is not found.');
-      return Promise.reject(new Error('_copyOrMovePath is not found.'));
-    }
-    const moveItemUrl = url.format({
-      protocol: 'https',
-      host: 'picasaweb.google.com',
-      path: picasaHome.body.match(/var _copyOrMovePath = '(.*?)'/)[1]
-    });
+  async moveItem () {
+    this._logger.error('"moveItem" is removed. Please use "addPhotoInAlbum".');
+    return Promise.reject(new Error('"moveItem" is removed. Please use "addPhotoInAlbum".'));
+  }
 
-    const moveActionRes = await this._request({
+  async addPhotoInAlbum (photoId, albumId) {
+    const reqQuery = [
+      'af.maf',
+      [[
+        'af.add',
+        79956622,
+        [{
+          '79956622': [ [ photoId ], albumId ]
+        }]
+      ]]
+    ];
+
+    const queryRes = await this._request({
       method: 'POST',
-      url: moveItemUrl,
+      url: 'https://photos.google.com/_/PhotosUi/mutate',
       form: {
-        uname: this._userId,
-        redir: '',
-        dest: '',
-        photoop: 'move',
-        selectedphotos: itemId,
-        srcAid: itemAlbumId,
-        albumop: 'existing',
-        aid: newAlbumId
+        'f.req': JSON.stringify(reqQuery),
+        at: this._atParam
       }
     });
 
-    if (moveActionRes.statusCode !== 302) {
-      this._logger.error('Failed to move item.');
-      return Promise.reject(new Error('Failed to move item.'));
+    if (queryRes.statusCode !== 200) {
+      this._logger.error(`Failed to add photo in album. ${queryRes.statusMessage}`);
+      return Promise.reject(new Error(`Failed to add photo in album. ${queryRes.statusMessage}`));
     }
+
+    const [ insertedPhotoId ] =
+      (await JSON.parseAsync(queryRes.body.substr(4)))[0][1]['79956622'][1];
+    return insertedPhotoId;
   }
 
   async upload (filePath, fileName) {

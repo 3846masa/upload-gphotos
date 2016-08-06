@@ -175,51 +175,98 @@ class GPhotos {
   }
 
   async createAlbum (albumName) {
-    albumName = albumName.toString();
-
-    const picasaHome = await this._request.get('https://picasaweb.google.com/home');
-    if (!picasaHome.body.match(/var _createAlbumPath = '.*?'/)) {
-      this._logger.error('_createAlbumPath is not found.');
-      return Promise.reject(new Error('_createAlbumPath is not found.'));
-    }
-    const createAlbumUrl = url.format({
-      protocol: 'https',
-      host: 'picasaweb.google.com',
-      path: picasaHome.body.match(/var _createAlbumPath = '(.*?)'/)[1]
-    });
+    const latestPhotoId = await this._fetchLatestPhotoId();
+    const reqQuery = [
+      'af.maf',
+      [[
+        'af.add',
+        79956622,
+        [{
+          '79956622': [ [ latestPhotoId ], null, albumName ]
+        }]
+      ]]
+    ];
 
     const createAlbumRes = await this._request({
       method: 'POST',
-      url: createAlbumUrl,
+      url: 'https://photos.google.com/_/PhotosUi/mutate',
       form: {
-        uname: this._userId,
-        title: albumName,
-        access: 'only_you',
-        description: '',
-        location: '',
-        date: moment().locale('en').format('l')
+        'f.req': JSON.stringify(reqQuery),
+        at: this._atParam
       }
     });
 
-    if (createAlbumRes.statusCode !== 302) {
-      this._logger.error(`Failed to create album "${ albumName }".`);
-      return Promise.reject(new Error(`Failed to create album "${ albumName }".`));
+    if (createAlbumRes.statusCode !== 200) {
+      return null;
     }
 
-    const albumUniqueName = createAlbumRes.headers.location.split('/').reverse()[0];
-    const albumInfoRSS = await this._request.get(url.format({
-      protocol: 'https',
-      host: 'picasaweb.google.com',
-      path: path.join('data/feed/api/user/', this._userId, 'album/', albumUniqueName),
-      query: { alt: 'rss' }
-    }));
+    const [ albumId, [ insertedPhotoId ] ] =
+      (await JSON.parseAsync(createAlbumRes.body.substr(4)))[0][1]['79956622'];
 
-    const parser = new XMLParser({ explicitArray : false });
-    const albumInfoJSON = await parser.parseString(albumInfoRSS.body);
-    const albumId = albumInfoJSON.rss.channel['gphoto:id'];
+    await this.removePhotoFromAlbum(insertedPhotoId);
 
     this._logger.info(`AlbumID is ${ albumId }.`);
-    return this.searchAlbum(albumId);
+    return {
+      id: albumId,
+      title: albumName,
+      period: {
+        from: new Date(0),
+        to: new Date(0)
+      },
+      items_count: 0,
+      type: 'album'
+    };
+  }
+
+  async removePhotoFromAlbum (photoId) {
+    const reqQuery = [
+      'af.maf',
+      [[
+        'af.add',
+        85381832,
+        [{
+          '85381832': [ [ photoId ], [] ]
+        }]
+      ]]
+    ];
+
+    const queryRes = await this._request({
+      method: 'POST',
+      url: 'https://photos.google.com/_/PhotosUi/mutate',
+      form: {
+        'f.req': JSON.stringify(reqQuery),
+        at: this._atParam
+      }
+    });
+
+    if (queryRes.statusCode !== 200) {
+      return Promise.reject(new Error(`Failed to remove photo. ${queryRes.statusMessage}`));
+    }
+    return true;
+  }
+
+  async _fetchLatestPhotoId () {
+    const reqQuery = [[
+      [ 74806772, [{
+        '74806772': [ null, null, null, null, 1 ]
+      }], null, null, 1]
+    ]];
+    const photoRes = await this._request({
+      method: 'POST',
+      url: 'https://photos.google.com/_/PhotosUi/data',
+      form: {
+        'f.req': JSON.stringify(reqQuery),
+        at: this._atParam
+      }
+    });
+
+    if (photoRes.statusCode !== 200) {
+      return null;
+    }
+
+    const results =
+      (await JSON.parseAsync(photoRes.body.substr(4)))[0][2]['74806772'];
+    return results[0][0][0];
   }
 
   async fetchAlbum (albumName) {

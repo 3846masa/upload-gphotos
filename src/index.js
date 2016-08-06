@@ -10,6 +10,7 @@ import url from 'url';
 import path from 'path';
 import moment from 'moment';
 import colors from 'colors/safe';
+import jsdom from './jsdom-async';
 
 class GPhotos {
   constructor ({ username, password, options }) {
@@ -63,7 +64,31 @@ class GPhotos {
     this._userId = gplusRes.request.uri.href.split('/').reverse()[0];
     this._logger.info(`UserID is ${ this._userId }.`);
 
+    await this.fetchAtParam();
+
     return true;
+  }
+
+  async fetchAtParam () {
+    const gPhotosTopPageRes = await this._request.get('https://photos.google.com');
+    if (gPhotosTopPageRes.statusCode !== 200) {
+      this._logger.error('Can\'t access to Google Photos...');
+      return Promise.reject(new Error('Failed to login'));
+    }
+
+    this._atParam = await this._generateAtParamFromHTMLAsync(gPhotosTopPageRes.body);
+    this._logger.info(`atParam is ${ this._atParam }.`);
+  }
+
+  async _generateAtParamFromHTMLAsync (html) {
+    const window = await jsdom.envAsync(html);
+    if (window.photos_PhotosUi && window.photos_PhotosUi.He) {
+      const atParam = window.photos_PhotosUi.He('SNlM0e').wa(null);
+      window.close();
+      return atParam;
+    } else {
+      return Promise.reject(new Error('Can\'t generate "at" param.'));
+    }
   }
 
   async searchAlbum (albumName) {

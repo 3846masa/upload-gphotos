@@ -27,8 +27,13 @@ class GPhotos {
       },
       jar: this._cookieJar
     });
-    this._logger = new Logger({
-      transports: [ new winston.transports.Console({ colorize: true }) ]
+    this._logger = this.options.logger || new Logger({
+      transports: [
+        new winston.transports.Console({
+          colorize: true,
+          stderrLevels: ['error', 'warn', 'info', 'verbose', 'debug', 'silly']
+        })
+      ]
     });
   }
 

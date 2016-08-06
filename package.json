@@ -1,0 +1,47 @@
+{
+  "name": "upload-gphotos",
+  "version": "0.1.0",
+  "description": "Upload to Google Photos",
+  "main": "index.js",
+  "dependencies": {
+    "co": "4.6.0",
+    "colors": "1.1.2",
+    "fs-promise": "0.5.0",
+    "jsdom": "9.4.1",
+    "moment": "2.13.0",
+    "pify": "2.3.0",
+    "progbar": "1.1.0",
+    "progress": "1.1.8",
+    "request": "2.72.0",
+    "request-promise": "3.0.0",
+    "tough-cookie": "2.2.2",
+    "winston": "2.2.0",
+    "xml2js": "0.4.16"
+  },
+  "devDependencies": {
+    "babel-cli": "6.9.0",
+    "babel-eslint": "6.0.4",
+    "babel-plugin-add-module-exports": "0.2.1",
+    "babel-plugin-transform-async-to-module-method": "6.8.0",
+    "babel-plugin-transform-class-properties": "6.9.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.8.0",
+    "eslint": "2.11.1",
+    "sane": "1.3.4",
+    "source-map-support": "0.4.0"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib --source-maps",
+    "watch": "sane \"npm run build\" src --glob='**/*.js'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "3846masa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3846masa/upload-gphotos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/3846masa/upload-gphotos/issues"
+  },
+  "homepage": "https://github.com/3846masa/upload-gphotos#readme"
+}

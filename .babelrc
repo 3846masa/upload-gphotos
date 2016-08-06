@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    "transform-class-properties", [
+      "transform-async-to-module-method",
+      {
+        "module": "co",
+        "method": "wrap"
+      }
+    ],
+    "add-module-exports",
+    "transform-es2015-modules-commonjs"
+  ]
+}

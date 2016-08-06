@@ -1,0 +1,28 @@
+parser: babel-eslint
+env:
+  browser: true
+  commonjs: true
+  es6: true
+parserOptions:
+  sourceType: module
+extends: 'eslint:recommended'
+globals:
+  process: false
+rules:
+  indent:
+    - error
+    - 2
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - single
+  semi:
+    - error
+    - always
+  no-var:
+    - error
+  no-restricted-globals:
+    - error
+    - self

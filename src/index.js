@@ -11,6 +11,7 @@ import path from 'path';
 import moment from 'moment';
 import colors from 'colors/safe';
 import jsdom from './jsdom-async';
+import JSON from './json-async';
 
 class GPhotos {
   constructor ({ username, password, options }) {
@@ -99,47 +100,78 @@ class GPhotos {
   async searchAlbum (albumName) {
     albumName = albumName.toString();
 
-    const albumListRssBaseUrlObj = {
-      protocol: 'https',
-      host: 'picasaweb.google.com',
-      path: path.join('data/feed/api/user/', this._userId)
+    let albumInfo = null;
+    let cursor = null;
+    const checkFilter = (info) => {
+      return info.title === albumName ||
+        info.id === albumName;
     };
 
-    const parser = new XMLParser({ explicitArray : false });
+    do {
+      const { list: albumList, next: nextCursor } =
+        await this._fetchAlbumList(cursor);
 
-    let albumInfo = null;
-    let cursor = 1;
-
-    while (!albumInfo) {
-      const albumListRssUrl =
-        url.format(Object.assign({}, albumListRssBaseUrlObj, {
-          query: {
-            'start-index': cursor,
-            alt: 'rss',
-            kind: 'album',
-            hl: 'ja'
-          }
-        }));
-      const albumListRssRes = await this._request.get(albumListRssUrl);
-      const albumListJSON = await parser.parseString(albumListRssRes.body);
-      const albumList = albumListJSON.rss.channel.item;
-
-      if (!albumList || albumList.length === 0) break;
-      cursor += albumList.length;
-
-      const checkFilter = (info) => {
-        return info.title === albumName ||
-          info['gphoto:name'] === albumName ||
-          info['gphoto:id'] === albumName;
-      };
       albumInfo = albumList.filter(checkFilter).shift();
-    }
+      cursor = nextCursor;
+    } while (!albumInfo && cursor);
 
     if (!albumInfo) {
       this._logger.error(`Album "${ albumName }" is not found.`);
       return Promise.reject(new Error(`Album "${ albumName }" is not found.`));
     }
     return albumInfo;
+  }
+
+  async fetchAllAlbumList () {
+    const albumList = [];
+
+    let cursor = null;
+    do {
+      const { list, next: nextCursor } = await this._fetchAlbumList(cursor);
+      albumList.push(...list);
+      cursor = nextCursor;
+    } while (cursor);
+
+    return albumList;
+  }
+
+  async _fetchAlbumList (next = null) {
+    const reqQuery = [[
+      [ 72930366, [{
+        '72930366': [ (next || null), null, null, null, 1 ]
+      }], null, null, 1]
+    ]];
+    const albumRes = await this._request({
+      method: 'POST',
+      url: 'https://photos.google.com/_/PhotosUi/data',
+      form: {
+        'f.req': JSON.stringify(reqQuery),
+        at: this._atParam
+      }
+    });
+
+    if (albumRes.statusCode !== 200) {
+      return { list: [], next: undefined };
+    }
+
+    const results =
+      (await JSON.parseAsync(albumRes.body.substr(4)))[0][2]['72930366'];
+
+    const albumList = results[0].map((al) => {
+      const info = al.pop()['72930366'];
+      return {
+        id: al.shift(),
+        title: info[1],
+        period: {
+          from: new Date(info[2][0]),
+          to: new Date(info[2][1])
+        },
+        items_count: info[3],
+        type: 'album'
+      };
+    });
+
+    return { list: albumList, next: results[1] };
   }
 
   async createAlbum (albumName) {

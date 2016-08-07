@@ -307,9 +307,9 @@ class GPhotos {
    * @param  {String} albumName
    * @return {Promise<GPhotosAlbum,Error>}
    */
-  async fetchAlbum (albumName) {
+  async searchOrCreateAlbum (albumName) {
     return this.searchAlbum(albumName)
-      .catch(() => this.createAlbum(albumName));
+      .then((album) => album || this.createAlbum(albumName));
   }
 
   async _sendDataQuery (queryNum, query) {

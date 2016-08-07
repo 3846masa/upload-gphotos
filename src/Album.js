@@ -94,6 +94,22 @@ class GPhotosAlbum {
   }
 
   /**
+   * @return {Promise<GPhotosPhoto[],Error>}
+   */
+  async fetchAllPhotoList () {
+    const photoList = [];
+
+    let cursor = null;
+    do {
+      const { list, next: nextCursor } = await this.fetchPhotoList(cursor);
+      photoList.push(...list);
+      cursor = nextCursor;
+    } while (cursor);
+
+    return photoList;
+  }
+
+  /**
    * @return {Promise<boolean,Error>}
    */
   async remove () {

@@ -72,14 +72,14 @@ class GPhotos {
 
     await this.fetchAtParam();
 
-    return true;
+    return this;
   }
 
   async fetchAtParam () {
     const gPhotosTopPageRes = await this._request.get('https://photos.google.com');
     if (gPhotosTopPageRes.statusCode !== 200) {
-      this._logger.error('Can\'t access to Google Photos...');
-      return Promise.reject(new Error('Failed to login'));
+      this._logger.error('Can\'t access to Google Photos');
+      return Promise.reject(new Error('Can\'t access to Google Photos'));
     }
 
     this._atParam = await this._generateAtParamFromHTMLAsync(gPhotosTopPageRes.body);
@@ -117,7 +117,7 @@ class GPhotos {
 
     if (!albumInfo) {
       this._logger.error(`Album "${ albumName }" is not found.`);
-      return Promise.reject(new Error(`Album "${ albumName }" is not found.`));
+      return null;
     }
     return albumInfo;
   }
@@ -213,32 +213,17 @@ class GPhotos {
     });
   }
 
-  async removePhotoFromAlbum (photoId) {
-    const reqQuery = [
-      'af.maf',
-      [[
-        'af.add',
-        85381832,
-        [{
-          '85381832': [ [ photoId ], [] ]
-        }]
-      ]]
-    ];
+  async fetchAllPhotoList () {
+    const photoList = [];
 
-    const queryRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/mutate',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._atParam
-      }
-    });
+    let cursor = null;
+    do {
+      const { list, next: nextCursor } = await this._fetchPhotoList(cursor);
+      photoList.push(...list);
+      cursor = nextCursor;
+    } while (cursor);
 
-    if (queryRes.statusCode !== 200) {
-      this._logger.error(`Failed to remove photo. ${queryRes.statusMessage}`);
-      return Promise.reject(new Error(`Failed to remove photo. ${queryRes.statusMessage}`));
-    }
-    return true;
+    return photoList;
   }
 
   async _fetchPhotoList (next = null) {
@@ -345,11 +330,11 @@ class GPhotos {
         width: Math.max(0, process.stdout.columns - 25),
         total: fileStat.size
       });
-      fileReadStream.on('open', () => console.warn());
+      fileReadStream.on('open', () => process.stderr.write('\n'));
       fileReadStream.on('data', (chunk) => {
         progressBar.tick(chunk.length);
       });
-      fileReadStream.on('end', () => console.warn());
+      fileReadStream.on('end', () => process.stderr.write('\n'));
     }
 
     const resultRes = await this._request({

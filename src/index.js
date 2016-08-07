@@ -10,6 +10,9 @@ import colors from 'colors/safe';
 import jsdom from './utils/jsdom-async';
 import JSON from './utils/json-async';
 
+import Album from './Album';
+import Photo from './Photo';
+
 class GPhotos {
   constructor ({ username, password, options }) {
     this.username = username;
@@ -156,7 +159,7 @@ class GPhotos {
 
     const albumList = results[0].map((al) => {
       const info = al.pop()['72930366'];
-      return {
+      return new Album({
         id: al.shift(),
         title: info[1],
         period: {
@@ -164,22 +167,22 @@ class GPhotos {
           to: new Date(info[2][1])
         },
         items_count: info[3],
-        type: 'album'
-      };
+        _parent: this
+      });
     });
 
     return { list: albumList, next: results[1] };
   }
 
   async createAlbum (albumName) {
-    const latestPhotoId = await this._fetchLatestPhotoId();
+    const latestPhoto = await this._fetchLatestPhoto();
     const reqQuery = [
       'af.maf',
       [[
         'af.add',
         79956622,
         [{
-          '79956622': [ [ latestPhotoId ], null, albumName ]
+          '79956622': [ [ latestPhoto.id ], null, albumName ]
         }]
       ]]
     ];
@@ -203,16 +206,11 @@ class GPhotos {
     await this.removePhotoFromAlbum(insertedPhotoId);
 
     this._logger.info(`AlbumID is ${ albumId }.`);
-    return {
+    return new Album({
       id: albumId,
       title: albumName,
-      period: {
-        from: new Date(0),
-        to: new Date(0)
-      },
-      items_count: 0,
-      type: 'album'
-    };
+      _parent: this
+    });
   }
 
   async removePhotoFromAlbum (photoId) {
@@ -243,10 +241,10 @@ class GPhotos {
     return true;
   }
 
-  async _fetchLatestPhotoId () {
+  async _fetchPhotoList (next = null) {
     const reqQuery = [[
       [ 74806772, [{
-        '74806772': [ null, null, null, null, 1 ]
+        '74806772': [ (next || null), null, null, null, 1 ]
       }], null, null, 1]
     ]];
     const photoRes = await this._request({
@@ -259,53 +257,38 @@ class GPhotos {
     });
 
     if (photoRes.statusCode !== 200) {
-      return null;
+      return { list: [], next: undefined };
     }
 
     const results =
       (await JSON.parseAsync(photoRes.body.substr(4)))[0][2]['74806772'];
-    return results[0][0][0];
+
+    const photoList = results[0].map((al) => {
+      const type = (al[1].pop()[0] === 15658734) ? 'video' : 'photo';
+      return new Photo({
+        id: al[0],
+        createdAt: al[2],
+        uploadedAt: al[5],
+        type: type,
+        length: (type === 'video') ? al[9]['76647426'][0] : null,
+        width: (type === 'photo') ? al[1][1] : al[9]['76647426'][2],
+        height: (type === 'photo') ? al[1][2] : al[9]['76647426'][3],
+        rawUrl: al[1][0],
+        _parent: this
+      });
+    });
+
+    return { list: photoList, next: results[1] };
+  }
+
+  async _fetchLatestPhoto () {
+    const latestPhotoList = await this._fetchPhotoList();
+    return latestPhotoList.list[0];
   }
 
   async fetchAlbum (albumName) {
     return this.searchAlbum(albumName)
       .catch(() => this.createAlbum(albumName));
-  }
-
-  async moveItem () {
-    this._logger.error('"moveItem" is removed. Please use "addPhotoInAlbum".');
-    return Promise.reject(new Error('"moveItem" is removed. Please use "addPhotoInAlbum".'));
-  }
-
-  async addPhotoInAlbum (photoId, albumId) {
-    const reqQuery = [
-      'af.maf',
-      [[
-        'af.add',
-        79956622,
-        [{
-          '79956622': [ [ photoId ], albumId ]
-        }]
-      ]]
-    ];
-
-    const queryRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/mutate',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._atParam
-      }
-    });
-
-    if (queryRes.statusCode !== 200) {
-      this._logger.error(`Failed to add photo in album. ${queryRes.statusMessage}`);
-      return Promise.reject(new Error(`Failed to add photo in album. ${queryRes.statusMessage}`));
-    }
-
-    const [ insertedPhotoId ] =
-      (await JSON.parseAsync(queryRes.body.substr(4)))[0][1]['79956622'][1];
-    return insertedPhotoId;
   }
 
   async upload (filePath, fileName) {
@@ -392,7 +375,18 @@ class GPhotos {
         .additionalInfo['uploader_service.GoogleRupioAdditionalInfo']
         .completionInfo
         .customerSpecificInfo;
-    return uploadInfo;
+
+    const uploadedPhoto = new Photo({
+      id: uploadInfo.photoMediaKey,
+      uploadedAt: new Date(),
+      createdAt: uploadInfo.timestamp * 1000,
+      type: uploadInfo.kind,
+      title: uploadInfo.title,
+      rawUrl: uploadInfo.url,
+      uploadInfo: uploadInfo,
+      _parent: this
+    });
+    return uploadedPhoto;
   }
 }
 

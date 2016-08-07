@@ -37,6 +37,18 @@ class GPhotosPhoto {
 
     return true;
   }
+
+  async remove () {
+    const query = [[], 1, [this.id], 4, null, []];
+
+    await this._gphotos._sendMutateQuery(73931313, query)
+      .catch((_err) => {
+        this._logger.error(`Failed to remove photo. ${_err.message}`);
+        return Promise.reject(_err);
+      });
+
+    return true;
+  }
 }
 
 export default GPhotosPhoto;

@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Upload to Google Photos",
   "main": "lib/index.js",
+  "bin": {
+    "upload-gphotos": "lib/cli.js"
+  },
   "dependencies": {
     "co": "4.6.0",
     "colors": "1.1.2",
@@ -10,10 +13,12 @@
     "jsdom": "9.4.1",
     "progbar": "1.1.0",
     "progress": "1.1.8",
+    "read": "1.0.7",
     "request": "2.72.0",
     "request-promise": "3.0.0",
     "tough-cookie": "2.2.2",
-    "winston": "2.2.0"
+    "winston": "2.2.0",
+    "yargs": "4.8.1"
   },
   "devDependencies": {
     "babel-cli": "6.9.0",

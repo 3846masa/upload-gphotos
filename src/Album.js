@@ -1,15 +1,28 @@
 import Photo from './Photo';
 
 class GPhotosAlbum {
+  /**
+   * @ignore
+   */
   constructor ({
     id, title, period = { from: new Date(0), to: new Date(0) },
     items_count = 0, _parent
   }) {
+    /** @type {String} */
     this.id = id;
+    /** @type {String} */
     this.title = title;
+    /**
+     * @type {Object}
+     * @property {Date} from
+     * @property {Date} to
+     */
     this.period = period;
+    /** @type {number} */
     this.items_count = items_count;
+    /** @type {String} */
     this.type = 'album';
+
     Object.defineProperties(this, {
       '_gphotos': {
         value: _parent
@@ -20,11 +33,19 @@ class GPhotosAlbum {
     });
   }
 
+  /**
+   * @param {GPhotosPhoto} photo
+   * @return {Promise<String,Error>}
+   */
   async addPhoto (photo) {
     const [ insertedPhotoId ] = await this.addPhotos([ photo ]);
     return insertedPhotoId;
   }
 
+  /**
+   * @param {GPhotosPhoto[]} photos
+   * @return {Promise<String[],Error>}
+   */
   async addPhotos (photos) {
     const query = [ photos.map((p) => p.id), this.id ];
 
@@ -39,6 +60,12 @@ class GPhotosAlbum {
     return insertedPhotoIds;
   }
 
+  /**
+   * @param  {?String} [next=null]
+   * @return {Promise<Object,Error>}
+   * @property {GPhotosPhoto[]} list
+   * @property {String|undefined} next
+   */
   async fetchPhotoList (next = null) {
     const query = [ this.id, (next || null), null, null, 0 ];
     const results =
@@ -66,6 +93,9 @@ class GPhotosAlbum {
     return { list: photoList, next: results[2] || null };
   }
 
+  /**
+   * @return {Promise<boolean,Error>}
+   */
   async remove () {
     const query = [[ this.id ], []];
 

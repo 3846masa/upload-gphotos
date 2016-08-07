@@ -1,0 +1,19 @@
+{
+  "source": "./src",
+  "destination": "./doc",
+  "title": "upload-gphotos | ESDoc",
+  "plugins": [
+    {
+      "name": "esdoc-importpath-plugin",
+      "option": {
+        "replaces": [{
+          "from": "^src/",
+          "to": "lib/"
+        }]
+      }
+    },
+    {
+      "name": "esdoc-es7-plugin"
+    }
+  ]
+}

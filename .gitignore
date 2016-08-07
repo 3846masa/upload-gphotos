@@ -42,6 +42,7 @@ jspm_packages
 
 # build
 lib
+doc
 
 # Others
 test.js

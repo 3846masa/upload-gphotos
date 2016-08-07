@@ -14,9 +14,32 @@ import Album from './Album';
 import Photo from './Photo';
 
 class GPhotos {
+  /**
+   * @external {winston.Logger} https://github.com/winstonjs/winston
+   */
+  /**
+   * @example
+   * const gphotos = new GPhotos({
+   *   username: 'username@gmail.com',
+   *   password: 'YOUR_PASSWORD',
+   *   options: {
+   *     progressbar: true,
+   *     logger: new wiston.Logger();
+   *   }
+   * });
+   * @param  {Object} params
+   * @param  {String} params.username
+   * @param  {String} params.password
+   * @param  {Object} [params.options]
+   * @param  {boolean} [params.options.progressbar]
+   * @param  {winston.Logger} [params.options.logger]
+   */
   constructor ({ username, password, options }) {
+    /** @type {String} */
     this.username = username;
+    /** @type {String} */
     this.password = password;
+    /** @type {Object} */
     this.options = options || {};
 
     const cookieJar = request.jar();
@@ -49,6 +72,17 @@ class GPhotos {
     });
   }
 
+  /**
+   * @example
+   * gphotos.login()
+   *   .then((gphotos) => {
+   *     // do something
+   *   })
+   *   .catch((err) => {
+   *     console.error(err.stack);
+   *   });
+   * @return {Promise<GPhotos,Error>}
+   */
   async login () {
     const loginUrl = 'https://accounts.google.com/ServiceLoginAuth?service=lh2';
     await this._request.get(loginUrl);
@@ -86,6 +120,9 @@ class GPhotos {
     return this;
   }
 
+  /**
+   * @return {Promise<undefined,Error>}
+   */
   async fetchAtParam () {
     const gPhotosTopPageRes = await this._request.get('https://photos.google.com');
     if (gPhotosTopPageRes.statusCode !== 200) {
@@ -108,6 +145,10 @@ class GPhotos {
     }
   }
 
+  /**
+   * @param  {String} albumName
+   * @return {Promise<GPhotosAlbum,Error>}
+   */
   async searchAlbum (albumName) {
     albumName = albumName.toString();
 
@@ -133,6 +174,9 @@ class GPhotos {
     return albumInfo;
   }
 
+  /**
+   * @return {Promise<GPhotosAlbum[],Error>}
+   */
   async fetchAllAlbumList () {
     const albumList = [];
 
@@ -146,6 +190,12 @@ class GPhotos {
     return albumList;
   }
 
+  /**
+   * @param  {?String} [next=null]
+   * @return {Promise<Object,Error>}
+   * @property {GPhotosAlbum[]} list
+   * @property {String|undefined} next
+   */
   async fetchAlbumList (next = null) {
     const query = [ (next || null), null, null, null, 1 ];
     const results =
@@ -172,6 +222,10 @@ class GPhotos {
     return { list: albumList, next: results[1] };
   }
 
+  /**
+   * @param  {String} albumName
+   * @return {Promise<GPhotosAlbum,Error>}
+   */
   async createAlbum (albumName) {
     const latestPhoto = await this._fetchLatestPhoto();
     const query = [ [ latestPhoto.id ], null, albumName ];
@@ -195,6 +249,9 @@ class GPhotos {
     });
   }
 
+  /**
+   * @return {Promise<GPhotosPhoto[],Error>}
+   */
   async fetchAllPhotoList () {
     const photoList = [];
 
@@ -208,6 +265,12 @@ class GPhotos {
     return photoList;
   }
 
+  /**
+   * @param  {?String} [next=null]
+   * @return {Promise<Object,Error>}
+   * @property {GPhotosPhoto[]} list
+   * @property {String|undefined} next
+   */
   async fetchPhotoList (next = null) {
     const query = [ (next || null), null, null, null, 1 ];
     const results =
@@ -240,6 +303,10 @@ class GPhotos {
     return latestPhotoList.list[0];
   }
 
+  /**
+   * @param  {String} albumName
+   * @return {Promise<GPhotosAlbum,Error>}
+   */
   async fetchAlbum (albumName) {
     return this.searchAlbum(albumName)
       .catch(() => this.createAlbum(albumName));
@@ -297,6 +364,11 @@ class GPhotos {
     return queryRes.body;
   }
 
+  /**
+   * @param  {String} filePath
+   * @param  {?String} [fileName]
+   * @return {Promise<GPhotosPhoto,Error>}
+   */
   async upload (filePath, fileName) {
     fileName = fileName || path.basename(filePath);
 

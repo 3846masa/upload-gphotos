@@ -11,10 +11,19 @@ class GPhotosPhoto {
     this.width = width;
     this.height = height;
     this.rawUrl = rawUrl;
-    this._uploadInfo = uploadInfo;
     this.type = type;
-    this._gphotos = _parent;
-    this._logger = this._gphotos._logger;
+    Object.defineProperties(this, {
+      '_gphotos': {
+        value: _parent
+      },
+      '_logger': {
+        value: _parent._logger
+      },
+      '_uploadInfo': {
+        value: uploadInfo,
+        writable: true
+      }
+    });
   }
 
   async removeFromAlbum () {

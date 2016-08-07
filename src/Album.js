@@ -12,8 +12,14 @@ class GPhotosAlbum {
     this.period = period;
     this.items_count = items_count;
     this.type = 'album';
-    this._gphotos = _parent;
-    this._logger = this._gphotos._logger;
+    Object.defineProperties(this, {
+      '_gphotos': {
+        value: _parent
+      },
+      '_logger': {
+        value: _parent._logger
+      }
+    });
   }
 
   async addPhoto (photo) {

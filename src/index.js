@@ -19,22 +19,33 @@ class GPhotos {
     this.password = password;
     this.options = options || {};
 
-    this._cookieJar = request.jar();
-    this._request = request.defaults({
-      simple: false,
-      resolveWithFullResponse: true,
-      headers: {
-        'User-Agent': `Mozilla/5.0 UploadGPhotos/${ packageInfo.version }`
+    const cookieJar = request.jar();
+    Object.defineProperties(this, {
+      '_cookieJar': {
+        value: cookieJar
       },
-      jar: this._cookieJar
-    });
-    this._logger = this.options.logger || new Logger({
-      transports: [
-        new winston.transports.Console({
-          colorize: true,
-          stderrLevels: ['error', 'warn', 'info', 'verbose', 'debug', 'silly']
+      '_request': {
+        value: request.defaults({
+          simple: false,
+          resolveWithFullResponse: true,
+          headers: {
+            'User-Agent': `Mozilla/5.0 UploadGPhotos/${ packageInfo.version }`
+          },
+          jar: cookieJar
         })
-      ]
+      },
+      '_logger': {
+        value: this.options.logger || new Logger({
+          transports: [
+            new winston.transports.Console({
+              colorize: true,
+              stderrLevels: [
+                'error', 'warn', 'info', 'verbose', 'debug', 'silly'
+              ]
+            })
+          ]
+        })
+      }
     });
   }
 
@@ -109,7 +120,7 @@ class GPhotos {
 
     do {
       const { list: albumList, next: nextCursor } =
-        await this._fetchAlbumList(cursor);
+        await this.fetchAlbumList(cursor);
 
       albumInfo = albumList.filter(checkFilter).shift();
       cursor = nextCursor;
@@ -127,7 +138,7 @@ class GPhotos {
 
     let cursor = null;
     do {
-      const { list, next: nextCursor } = await this._fetchAlbumList(cursor);
+      const { list, next: nextCursor } = await this.fetchAlbumList(cursor);
       albumList.push(...list);
       cursor = nextCursor;
     } while (cursor);
@@ -135,7 +146,7 @@ class GPhotos {
     return albumList;
   }
 
-  async _fetchAlbumList (next = null) {
+  async fetchAlbumList (next = null) {
     const query = [ (next || null), null, null, null, 1 ];
     const results =
       await this._sendDataQuery(72930366, query)
@@ -189,7 +200,7 @@ class GPhotos {
 
     let cursor = null;
     do {
-      const { list, next: nextCursor } = await this._fetchPhotoList(cursor);
+      const { list, next: nextCursor } = await this.fetchPhotoList(cursor);
       photoList.push(...list);
       cursor = nextCursor;
     } while (cursor);
@@ -197,7 +208,7 @@ class GPhotos {
     return photoList;
   }
 
-  async _fetchPhotoList (next = null) {
+  async fetchPhotoList (next = null) {
     const query = [ (next || null), null, null, null, 1 ];
     const results =
       await this._sendDataQuery(74806772, query)
@@ -225,7 +236,7 @@ class GPhotos {
   }
 
   async _fetchLatestPhoto () {
-    const latestPhotoList = await this._fetchPhotoList();
+    const latestPhotoList = await this.fetchPhotoList();
     return latestPhotoList.list[0];
   }
 

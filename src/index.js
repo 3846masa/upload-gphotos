@@ -1,5 +1,5 @@
 import packageInfo from '../package.json';
-import reqJSONTemplateGenerator from './request-json-template-generator';
+import reqJSONTemplateGenerator from './utils/request-json-template-generator';
 
 import winston, { Logger } from 'winston';
 import request from 'request-promise';
@@ -7,8 +7,8 @@ import fs from 'fs-promise';
 import ProgressBar from 'progress';
 import path from 'path';
 import colors from 'colors/safe';
-import jsdom from './jsdom-async';
-import JSON from './json-async';
+import jsdom from './utils/jsdom-async';
+import JSON from './utils/json-async';
 
 class GPhotos {
   constructor ({ username, password, options }) {

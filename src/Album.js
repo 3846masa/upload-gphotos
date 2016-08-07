@@ -13,7 +13,6 @@ class GPhotosAlbum {
     this.items_count = items_count;
     this.type = 'album';
     this._gphotos = _parent;
-    this._request = this._gphotos._request;
     this._logger = this._gphotos._logger;
   }
 
@@ -23,57 +22,27 @@ class GPhotosAlbum {
   }
 
   async addPhotos (photos) {
-    const reqQuery = [
-      'af.maf',
-      [[
-        'af.add',
-        79956622,
-        [{
-          '79956622': [ photos.map((p) => p.id), this.id ]
-        }]
-      ]]
-    ];
+    const query = [ photos.map((p) => p.id), this.id ];
 
-    const queryRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/mutate',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._gphotos._atParam
-      }
-    });
+    const results =
+      await this._gphotos._sendMutateQuery(79956622, query)
+        .catch((_err) => {
+          this._logger.error(`Failed to add photo in album. ${_err.message}`);
+          return Promise.reject(_err);
+        });
 
-    if (queryRes.statusCode !== 200) {
-      this._logger.error(`Failed to add photo in album. ${queryRes.statusMessage}`);
-      return Promise.reject(new Error(`Failed to add photo in album. ${queryRes.statusMessage}`));
-    }
-
-    const insertedPhotoIds =
-      (await JSON.parseAsync(queryRes.body.substr(4)))[0][1]['79956622'][1];
+    const insertedPhotoIds = results[1];
     return insertedPhotoIds;
   }
 
   async fetchPhotoList (next = null) {
-    const reqQuery = [[
-      [ 71837398, [{
-        '71837398': [ this.id, (next || null), null, null, 0 ]
-      }], null, null, 0]
-    ]];
-    const photoRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/data',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._atParam
-      }
-    });
-
-    if (photoRes.statusCode !== 200) {
-      return { list: [], next: undefined };
-    }
-
+    const query = [ this.id, (next || null), null, null, 0 ];
     const results =
-      (await JSON.parseAsync(photoRes.body.substr(4)))[0][2]['71837398'];
+      await this._gphotos._sendDataQuery(71837398, query)
+        .catch((_err) => {
+          this._logger.error(`Failed to fetch photos. ${_err.message}`);
+          return Promise.reject(_err);
+        });
 
     const photoList = results[1].map((al) => {
       const type = (al[1].pop()[0] === 15658734) ? 'video' : 'photo';

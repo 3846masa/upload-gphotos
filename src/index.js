@@ -136,26 +136,13 @@ class GPhotos {
   }
 
   async _fetchAlbumList (next = null) {
-    const reqQuery = [[
-      [ 72930366, [{
-        '72930366': [ (next || null), null, null, null, 1 ]
-      }], null, null, 1]
-    ]];
-    const albumRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/data',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._atParam
-      }
-    });
-
-    if (albumRes.statusCode !== 200) {
-      return { list: [], next: undefined };
-    }
-
+    const query = [ (next || null), null, null, null, 1 ];
     const results =
-      (await JSON.parseAsync(albumRes.body.substr(4)))[0][2]['72930366'];
+      await this._sendDataQuery(72930366, query)
+        .catch((_err) => {
+          this._logger.error(`Failed to fetch albums. ${_err.message}`);
+          return Promise.reject(_err);
+        });
 
     const albumList = results[0].map((al) => {
       const info = al.pop()['72930366'];
@@ -176,34 +163,18 @@ class GPhotos {
 
   async createAlbum (albumName) {
     const latestPhoto = await this._fetchLatestPhoto();
-    const reqQuery = [
-      'af.maf',
-      [[
-        'af.add',
-        79956622,
-        [{
-          '79956622': [ [ latestPhoto.id ], null, albumName ]
-        }]
-      ]]
-    ];
+    const query = [ [ latestPhoto.id ], null, albumName ];
 
-    const createAlbumRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/mutate',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._atParam
-      }
-    });
+    const results =
+      await this._sendMutateQuery(79956622, query)
+        .catch((_err) => {
+          this._logger.error(`Failed to create album. ${_err.message}`);
+          return Promise.reject(_err);
+        });
 
-    if (createAlbumRes.statusCode !== 200) {
-      return null;
-    }
+    const [ albumId, [ insertedPhotoId ] ] = results;
 
-    const [ albumId, [ insertedPhotoId ] ] =
-      (await JSON.parseAsync(createAlbumRes.body.substr(4)))[0][1]['79956622'];
-
-    await this.removePhotoFromAlbum(insertedPhotoId);
+    await new Photo({ id: insertedPhotoId, _parent: this}).removeFromAlbum();
 
     this._logger.info(`AlbumID is ${ albumId }.`);
     return new Album({
@@ -227,26 +198,13 @@ class GPhotos {
   }
 
   async _fetchPhotoList (next = null) {
-    const reqQuery = [[
-      [ 74806772, [{
-        '74806772': [ (next || null), null, null, null, 1 ]
-      }], null, null, 1]
-    ]];
-    const photoRes = await this._request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/PhotosUi/data',
-      form: {
-        'f.req': JSON.stringify(reqQuery),
-        at: this._atParam
-      }
-    });
-
-    if (photoRes.statusCode !== 200) {
-      return { list: [], next: undefined };
-    }
-
+    const query = [ (next || null), null, null, null, 1 ];
     const results =
-      (await JSON.parseAsync(photoRes.body.substr(4)))[0][2]['74806772'];
+      await this._sendDataQuery(74806772, query)
+        .catch((_err) => {
+          this._logger.error(`Failed to fetch photos. ${_err.message}`);
+          return Promise.reject(_err);
+        });
 
     const photoList = results[0].map((al) => {
       const type = (al[1].pop()[0] === 15658734) ? 'video' : 'photo';
@@ -274,6 +232,58 @@ class GPhotos {
   async fetchAlbum (albumName) {
     return this.searchAlbum(albumName)
       .catch(() => this.createAlbum(albumName));
+  }
+
+  async _sendDataQuery (queryNum, query) {
+    const reqQuery = [[
+      [ parseInt(queryNum, 10), [{
+        [String(queryNum)]: query
+      }], null, null, 0]
+    ]];
+
+    const url = 'https://photos.google.com/_/PhotosUi/data';
+    const body = await this._sendQuery(url, reqQuery);
+
+    const results =
+      (await JSON.parseAsync(body.substr(4)))[0][2][String(queryNum)];
+    return results;
+  }
+
+  async _sendMutateQuery (queryNum, query) {
+    const reqQuery = [
+      'af.maf',
+      [[
+        'af.add',
+        parseInt(queryNum, 10),
+        [{
+          [String(queryNum)]: query
+        }]
+      ]]
+    ];
+
+    const url = 'https://photos.google.com/_/PhotosUi/mutate';
+    const body = await this._sendQuery(url, reqQuery);
+
+    const results =
+      (await JSON.parseAsync(body.substr(4)))[0][1][String(queryNum)];
+    return results;
+  }
+
+  async _sendQuery (url, query) {
+    const queryRes = await this._request({
+      method: 'POST',
+      url: url,
+      form: {
+        'f.req': JSON.stringify(query),
+        at: this._atParam
+      }
+    });
+
+    if (queryRes.statusCode !== 200) {
+      return Promise.reject(new Error(`${queryRes.statusMessage}`));
+    }
+
+    return queryRes.body;
   }
 
   async upload (filePath, fileName) {

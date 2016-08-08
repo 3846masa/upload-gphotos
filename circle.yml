@@ -1,0 +1,22 @@
+machine:
+  node:
+    version: 4.4.7
+  post:
+    - npm install -g npm@3
+  timezone: Asia/Tokyo
+dependencies:
+  pre:
+    - npm config set progress false
+    - npm config set spin false
+    - npm install -d
+  override:
+    - npm run build:babel
+test:
+  override:
+    - echo
+deployment:
+  production:
+    tag: /v\d.*/
+    commands:
+      - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      - npm publish

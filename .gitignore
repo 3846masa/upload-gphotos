@@ -43,6 +43,8 @@ jspm_packages
 # build
 lib
 doc
+tmp
+upload-gphotos
 
 # Others
 test.js

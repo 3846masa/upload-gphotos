@@ -1,4 +1,5 @@
 {
+  "presets": [ "es2015-node4" ],
   "plugins": [
     "transform-class-properties", [
       "transform-async-to-module-method",

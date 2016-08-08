@@ -1,7 +1,8 @@
 import packageInfo from '../package.json';
 import reqJSONTemplateGenerator from './utils/request-json-template-generator';
 
-import winston, { Logger } from 'winston';
+// import winston, { Logger } from 'winston';
+import log4js from 'log4js';
 import request from 'request-promise';
 import fs from 'fs-promise';
 import ProgressBar from 'progress';
@@ -18,6 +19,9 @@ class GPhotos {
    * @external {winston.Logger} https://github.com/winstonjs/winston
    */
   /**
+   * @external {log4js.Logger} https://github.com/nomiddlename/log4js-node
+   */
+  /**
    * @example
    * const gphotos = new GPhotos({
    *   username: 'username@gmail.com',
@@ -32,7 +36,7 @@ class GPhotos {
    * @param  {String} params.password
    * @param  {Object} [params.options]
    * @param  {boolean} [params.options.progressbar]
-   * @param  {winston.Logger} [params.options.logger]
+   * @param  {winston.Logger|log4js.Logger} [params.options.logger]
    */
   constructor ({ username, password, options }) {
     /** @type {String} */
@@ -58,16 +62,7 @@ class GPhotos {
         })
       },
       '_logger': {
-        value: this.options.logger || new Logger({
-          transports: [
-            new winston.transports.Console({
-              colorize: true,
-              stderrLevels: [
-                'error', 'warn', 'info', 'verbose', 'debug', 'silly'
-              ]
-            })
-          ]
-        })
+        value: this.options.logger || log4js.getLogger()
       }
     });
   }

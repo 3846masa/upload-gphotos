@@ -3,7 +3,18 @@ import fs from 'fs-promise';
 import path from 'path';
 import argParser from 'yargs';
 import read from './utils/read';
+import log4js from 'log4js';
 import GPhotos from './index';
+
+log4js.configure({
+  appenders: [{
+    type: 'console',
+    layout: {
+      type: 'pattern',
+      pattern: '%[%p%] %m'
+    }
+  }]
+});
 
 argParser.demand(1);
 argParser.usage(`Usage: ${path.basename(process.execPath)} [-u username] [-p password] [-a albumname] file [...]`);
@@ -34,7 +45,8 @@ const { u: username, p: password, _: files, a: albumName } = argParser.argv;
     username: username || (await read({ prompt: 'Username: ' })),
     password: password || (await read({ prompt: 'Password: ', silent: true })),
     options: {
-      progressbar: true
+      progressbar: true,
+      logger: log4js.getLogger()
     }
   });
   await gphotos.login();

@@ -67,6 +67,11 @@
     "watch:babel": "npm run build:babel --source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
   "author": "3846masa",
   "license": "MIT",
   "repository": {

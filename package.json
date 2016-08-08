@@ -4,7 +4,7 @@
   "description": "Upload to Google Photos",
   "main": "lib/index.js",
   "bin": {
-    "upload-gphotos": "lib/bin/cli.js"
+    "upload-gphotos": "lib/cli.js"
   },
   "nexe": {
     "input": "./lib/cli.js",

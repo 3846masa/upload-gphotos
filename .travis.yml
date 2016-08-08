@@ -1,0 +1,89 @@
+---
+sudo: false
+language: cpp
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+    - g++-4.8-multilib
+    - gcc-multilib
+
+# Build matrix
+os:
+  - linux
+  - osx
+env:
+  matrix:
+    - TRAVIS_NODE_VERSION="4"
+    - TRAVIS_NODE_VERSION="4" ARCH="x86"
+matrix:
+  exclude:
+    - os: osx
+      env: TRAVIS_NODE_VERSION="4" ARCH="x86"
+
+before_install:
+  # reinstall latest nvm
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh
+  - nvm install $TRAVIS_NODE_VERSION
+  - PATH=$PATH:`pwd`/node_modules/.bin
+
+  - BASE_URL=$(node -p "'https://nodejs.org/dist/' + process.version")
+  - X86_FILE=$(node -p "'node-' + process.version + '-' + process.platform + '-x86'")
+  # download node if testing x86 architecture
+  - if [[ "$ARCH" == "x86" ]]; then wget $BASE_URL/$X86_FILE.tar.gz; tar -xf $X86_FILE.tar.gz; export PATH=$X86_FILE/bin:$PATH; fi
+
+  # print versions
+  - uname -a
+  - file `which node`
+  - node --version
+  - node -p 'process.platform + "@" + process.arch'
+  - npm --version
+
+  # use g++-4.8 on Linux
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
+  - $CXX --version
+
+  # figure out if we should publish
+  - PUBLISH_BINARY=false
+  # if we are building a tag then publish
+  - echo $TRAVIS_BRANCH
+  - echo `git describe --tags --always HEAD`
+  - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
+  - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY
+
+  # Cleanup the output of npm
+  - npm config set progress false
+  - npm config set spin false
+  - npm install -g npm@3
+
+install:
+  # ensure source install works
+  - npm install
+
+script:
+  - npm run build
+  # if publishing, do it
+  - zip -q upload-gphotos-${TRAVIS_OS_NAME}-${ARCH:-x64}.zip upload-gphotos
+
+after_success:
+  - echo
+
+notifications:
+  slack:
+    secure: "hRC/D+zp8VOcZXRU59SUUICHBkifmeFElUtsZAs/OqjwX/iF4bSni05aFk/r+cgVtfB4yAXUBmAxpbo5R4mYSDiIAQ8ToNDfV27GKPIddGWsz7pAKhg0QbuE3Z8CC0lIlyVmffv93eAKTEU68DiTgy5nVswBcJi0NbIllwOKULEaKku3G8Vj5HYgtNChphrtDRaw/qTM7L/Mcqbpiuy6Qw//fmI7qOXYg6v09mIUVI2XL/E3N+V3+12K08aMOMLL2VoJHdZcolgTcUjPjAPJD91hx/aMAyukdoo6r/msrQcMOQtfRYvQJ3/qTjFFdeyU0E7X2Kx6wodovW7AgPV0HaQwgWQxd1jr4Oy3U7x2w2GP5y1gRWdcmkAv2c5ZDgcWDJyf7EOxYgMh5ddxvzs9xZ3srZsEF7MKphXUS/SdisCYmxuny7eEvUygg78yR+5OOnlsJkZ9lJpnRo7tuB/ZDVy2m/z1I62uSoR7JoZ7UtSfKgQH4h4YMXbGdpSRqFGlQ2q5Wrv3a87axZR52IIclf9WJyK70Av4XUKpOXMOjuw7oiQnmse/6g6jy3KxfsOgqDOnV85nF9DBz+RQ7g4kFxhDs1b/p2W+B+cJiafG9ncnboAa8D2b+77v5N/ys+5GyAMWGk8RX5/ITXy3XWKEhCuzoXFe9Rn0110vCYsf/Ic="
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "kM6kcJBSJITLQG+Kw1irJktlxwtkN86D8QNyieYGhhCJmJ6B0SVTE6+42KGCWhvOSeIvyatld1MtcA/VKtIu/xLoSofKoQke/6jYCIEpUHNKgz7C3KyQ+6Zyf0C8kj2zjuUOvlTRZzS4Orcv4Rnx9nTEde5TmMllOZGZdd0vcQTZelK7KK7rimgU3VVqGLk7BPyMK/Ityb90gGqKu6JOz/WWH7rGv/2FZHULIcK71itSwCoUvaEduLG3LeHkVw1a3iqIpG4/x49g0/KMdMuc6UWudu4MGcjrtISe6dOzQMTEi6wO0KM5liIvX+Bx3HKSN/KzwS5mk0gMXwPjIa82NwXSYCNpGLYnud/TXVw6MmXZ/CtKjsTGTqpd1UoYZueeN/uPdGsMEK5OjVeBKUKPs64zRQ1XYjzsOIR5obKtAw0PuVhISKSn2saS++0fR+saFusskB4jwiI8JmAQVL7dO4gmNc0XQEEajZD6HG/RoovNWe4Y40cqqua/dufZA803VaXSLj9gFjsE4ROaHFJ75SrS8qsE10sI5Ww8vE1wrvXis2LKFd4aKQTlOPDBserN12Wiym3fs/TcgfyJuv+Rm/XfmVuP9K8Xd2wAs4SVFuKXduisRJsc71gY6hx5a9ZQPJbCGiJlHd6SjcAKpDU5GxqkbxQDxS0OFl0bGr1P7Kg="
+  file:
+    - upload-gphotos-osx-x64.zip
+    - upload-gphotos-linux-x64.zip
+    - upload-gphotos-linux-x86.zip
+  on:
+    repo: 3846masa/upload-gphotos
+    tags: true
+    all_branches: true
+  skip_cleanup: true

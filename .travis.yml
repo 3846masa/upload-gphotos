@@ -74,14 +74,15 @@ notifications:
   slack:
     secure: "hRC/D+zp8VOcZXRU59SUUICHBkifmeFElUtsZAs/OqjwX/iF4bSni05aFk/r+cgVtfB4yAXUBmAxpbo5R4mYSDiIAQ8ToNDfV27GKPIddGWsz7pAKhg0QbuE3Z8CC0lIlyVmffv93eAKTEU68DiTgy5nVswBcJi0NbIllwOKULEaKku3G8Vj5HYgtNChphrtDRaw/qTM7L/Mcqbpiuy6Qw//fmI7qOXYg6v09mIUVI2XL/E3N+V3+12K08aMOMLL2VoJHdZcolgTcUjPjAPJD91hx/aMAyukdoo6r/msrQcMOQtfRYvQJ3/qTjFFdeyU0E7X2Kx6wodovW7AgPV0HaQwgWQxd1jr4Oy3U7x2w2GP5y1gRWdcmkAv2c5ZDgcWDJyf7EOxYgMh5ddxvzs9xZ3srZsEF7MKphXUS/SdisCYmxuny7eEvUygg78yR+5OOnlsJkZ9lJpnRo7tuB/ZDVy2m/z1I62uSoR7JoZ7UtSfKgQH4h4YMXbGdpSRqFGlQ2q5Wrv3a87axZR52IIclf9WJyK70Av4XUKpOXMOjuw7oiQnmse/6g6jy3KxfsOgqDOnV85nF9DBz+RQ7g4kFxhDs1b/p2W+B+cJiafG9ncnboAa8D2b+77v5N/ys+5GyAMWGk8RX5/ITXy3XWKEhCuzoXFe9Rn0110vCYsf/Ic="
 
+before_deploy:
+  - export FILE_TO_UPLOAD="upload-gphotos-${TRAVIS_OS_NAME}-${ARCH:-x64}.zip"
+
 deploy:
   provider: releases
   api_key:
     secure: "kM6kcJBSJITLQG+Kw1irJktlxwtkN86D8QNyieYGhhCJmJ6B0SVTE6+42KGCWhvOSeIvyatld1MtcA/VKtIu/xLoSofKoQke/6jYCIEpUHNKgz7C3KyQ+6Zyf0C8kj2zjuUOvlTRZzS4Orcv4Rnx9nTEde5TmMllOZGZdd0vcQTZelK7KK7rimgU3VVqGLk7BPyMK/Ityb90gGqKu6JOz/WWH7rGv/2FZHULIcK71itSwCoUvaEduLG3LeHkVw1a3iqIpG4/x49g0/KMdMuc6UWudu4MGcjrtISe6dOzQMTEi6wO0KM5liIvX+Bx3HKSN/KzwS5mk0gMXwPjIa82NwXSYCNpGLYnud/TXVw6MmXZ/CtKjsTGTqpd1UoYZueeN/uPdGsMEK5OjVeBKUKPs64zRQ1XYjzsOIR5obKtAw0PuVhISKSn2saS++0fR+saFusskB4jwiI8JmAQVL7dO4gmNc0XQEEajZD6HG/RoovNWe4Y40cqqua/dufZA803VaXSLj9gFjsE4ROaHFJ75SrS8qsE10sI5Ww8vE1wrvXis2LKFd4aKQTlOPDBserN12Wiym3fs/TcgfyJuv+Rm/XfmVuP9K8Xd2wAs4SVFuKXduisRJsc71gY6hx5a9ZQPJbCGiJlHd6SjcAKpDU5GxqkbxQDxS0OFl0bGr1P7Kg="
   file:
-    - upload-gphotos-osx-x64.zip
-    - upload-gphotos-linux-x64.zip
-    - upload-gphotos-linux-x86.zip
+    - "${FILE_TO_UPLOAD}"
   on:
     repo: 3846masa/upload-gphotos
     tags: true

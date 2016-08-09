@@ -1,4 +1,8 @@
 ---
+branches:
+  only:
+    - /v[\d\.]+/
+
 sudo: false
 language: cpp
 addons:

@@ -20,3 +20,4 @@ deployment:
     commands:
       - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
       - npm publish
+      - curl -s --data-urlencode "gitUrl=git@github.com:3846masa/upload-gphotos.git" https://doc.esdoc.org/api/create > /dev/null

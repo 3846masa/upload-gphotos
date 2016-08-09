@@ -283,7 +283,7 @@ class GPhotos {
         });
 
     const photoList = results[0].map((al) => {
-      const type = (al[1].pop()[0] === 15658734) ? 'video' : 'photo';
+      const type = (!al[9]) ? 'photo' : 'video';
       return new Photo({
         id: al[0],
         createdAt: al[2],

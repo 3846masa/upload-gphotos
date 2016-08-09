@@ -54,7 +54,7 @@
     "nexe": "1.1.2",
     "npm-check-updates": "2.8.0",
     "npm-run-all": "2.3.0",
-    "sane": "1.4.0",
+    "sane": "1.4.1",
     "source-map-support": "0.4.2"
   },
   "scripts": {

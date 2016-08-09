@@ -139,7 +139,7 @@ class GPhotos {
   async _generateAtParamFromHTMLAsync (html) {
     const window = await jsdom.envAsync(html);
     if (window.photos_PhotosUi && window.photos_PhotosUi.He) {
-      const atParam = window.photos_PhotosUi.He('SNlM0e').wa(null);
+      const atParam = window.photos_PhotosUi.Ie('SNlM0e').xa(null);
       window.close();
       return atParam;
     } else {

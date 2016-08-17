@@ -53,7 +53,7 @@
     "eslint": "3.3.1",
     "nexe": "1.1.2",
     "npm-check-updates": "2.8.0",
-    "npm-run-all": "2.3.0",
+    "npm-run-all": "3.0.0",
     "sane": "1.4.1",
     "source-map-support": "0.4.2"
   },

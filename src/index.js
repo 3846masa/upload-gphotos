@@ -8,6 +8,8 @@ import fs from 'fs-promise';
 import ProgressBar from 'progress';
 import path from 'path';
 import colors from 'colors/safe';
+import qs from 'querystring';
+import cheerio from 'cheerio';
 import jsdom from './utils/jsdom-async';
 import JSON from './utils/json-async';
 
@@ -79,24 +81,16 @@ class GPhotos {
    * @return {Promise<GPhotos,Error>}
    */
   async login () {
-    const loginUrl = 'https://accounts.google.com/ServiceLoginAuth?service=lh2';
-    await this._request.get(loginUrl);
+    const loginUrl = 'https://accounts.google.com/ServiceLoginAuth';
+    const { body: loginHTML } = await this._request.get(loginUrl);
 
-    const _GALX =
-      this._cookieJar.getCookies(loginUrl)
-        .filter((c) => c.key === 'GALX').pop().value;
-
-    const loginData = {
-      Email: this.username,
-      Passwd: this.password,
-      pstMsg: 1,
-      GALX: _GALX,
-      _utf8: '\u9731',
-      bgresponse: 'js_disabled',
-      checkedDomains: 'youtube',
-      checkConnection: 'youtube:56:1',
-      PersistentCookie: 'yes'
-    };
+    const loginData = Object.assign(
+      qs.parse(cheerio.load(loginHTML)('form').serialize()),
+      {
+        Email: this.username,
+        Passwd: this.password
+      }
+    );
 
     const loginRes = await this._request.post(loginUrl, { form: loginData });
 

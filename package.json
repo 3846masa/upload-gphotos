@@ -26,6 +26,7 @@
     }
   },
   "dependencies": {
+    "cheerio": "0.22.0",
     "co": "4.6.0",
     "colors": "1.1.2",
     "fs-promise": "0.5.0",

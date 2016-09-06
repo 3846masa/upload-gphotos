@@ -120,24 +120,29 @@ class GPhotos {
    * @return {Promise<undefined,Error>}
    */
   async fetchAtParam () {
+    const params = await this._fetchGPhotosParams();
+    if (!params.SNlM0e) {
+      return Promise.reject(new Error('Can\'t fetch "at" param.'));
+    }
+
+    this._atParam = params.SNlM0e;
+    this._logger.info(`atParam is ${ this._atParam }.`);
+  }
+
+  async _fetchGPhotosParams () {
     const gPhotosTopPageRes = await this._request.get('https://photos.google.com');
     if (gPhotosTopPageRes.statusCode !== 200) {
       this._logger.error('Can\'t access to Google Photos');
       return Promise.reject(new Error('Can\'t access to Google Photos'));
     }
 
-    this._atParam = await this._generateAtParamFromHTMLAsync(gPhotosTopPageRes.body);
-    this._logger.info(`atParam is ${ this._atParam }.`);
-  }
-
-  async _generateAtParamFromHTMLAsync (html) {
-    const window = await jsdom.envAsync(html);
+    const window = await jsdom.envAsync(gPhotosTopPageRes.body);
     if (window.WIZ_global_data && window.WIZ_global_data.SNlM0e) {
-      const atParam = window.WIZ_global_data.SNlM0e;
+      const params = window.WIZ_global_data;
       window.close();
-      return atParam;
+      return params;
     } else {
-      return Promise.reject(new Error('Can\'t generate "at" param.'));
+      return Promise.reject(new Error('Can\'t fetch GPhotos params.'));
     }
   }
 

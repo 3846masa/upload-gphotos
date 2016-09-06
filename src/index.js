@@ -99,14 +99,11 @@ class GPhotos {
       return Promise.reject(new Error('Failed to login'));
     }
 
-    const gplusRes = await this._request.head('https://plus.google.com/u/0/me');
-    this._userId = gplusRes.request.uri.href.split('/').reverse()[0];
-
-    if (!String(this._userId).match(/^\d+$/)) {
-      this._logger.error('Failed to login...');
-      this._logger.warn('Tips: Before to login, you should setup Google+.');
-      return Promise.reject(new Error('Failed to login'));
+    const params = await this._fetchGPhotosParams();
+    if (!params.S06Grb) {
+      return Promise.reject(new Error('Can\'t fetch userId.'));
     }
+    this._userId = params.S06Grb;
 
     this._logger.info('Success to login!');
     this._logger.info(`UserID is ${ this._userId }.`);
@@ -120,24 +117,29 @@ class GPhotos {
    * @return {Promise<undefined,Error>}
    */
   async fetchAtParam () {
+    const params = await this._fetchGPhotosParams();
+    if (!params.SNlM0e) {
+      return Promise.reject(new Error('Can\'t fetch "at" param.'));
+    }
+
+    this._atParam = params.SNlM0e;
+    this._logger.info(`atParam is ${ this._atParam }.`);
+  }
+
+  async _fetchGPhotosParams () {
     const gPhotosTopPageRes = await this._request.get('https://photos.google.com');
     if (gPhotosTopPageRes.statusCode !== 200) {
       this._logger.error('Can\'t access to Google Photos');
       return Promise.reject(new Error('Can\'t access to Google Photos'));
     }
 
-    this._atParam = await this._generateAtParamFromHTMLAsync(gPhotosTopPageRes.body);
-    this._logger.info(`atParam is ${ this._atParam }.`);
-  }
-
-  async _generateAtParamFromHTMLAsync (html) {
-    const window = await jsdom.envAsync(html);
+    const window = await jsdom.envAsync(gPhotosTopPageRes.body);
     if (window.WIZ_global_data && window.WIZ_global_data.SNlM0e) {
-      const atParam = window.WIZ_global_data.SNlM0e;
+      const params = window.WIZ_global_data;
       window.close();
-      return atParam;
+      return params;
     } else {
-      return Promise.reject(new Error('Can\'t generate "at" param.'));
+      return Promise.reject(new Error('Can\'t fetch GPhotos params.'));
     }
   }
 

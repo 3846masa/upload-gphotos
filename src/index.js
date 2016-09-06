@@ -99,14 +99,11 @@ class GPhotos {
       return Promise.reject(new Error('Failed to login'));
     }
 
-    const gplusRes = await this._request.head('https://plus.google.com/u/0/me');
-    this._userId = gplusRes.request.uri.href.split('/').reverse()[0];
-
-    if (!String(this._userId).match(/^\d+$/)) {
-      this._logger.error('Failed to login...');
-      this._logger.warn('Tips: Before to login, you should setup Google+.');
-      return Promise.reject(new Error('Failed to login'));
+    const params = await this._fetchGPhotosParams();
+    if (!params.S06Grb) {
+      return Promise.reject(new Error('Can\'t fetch userId.'));
     }
+    this._userId = params.S06Grb;
 
     this._logger.info('Success to login!');
     this._logger.info(`UserID is ${ this._userId }.`);

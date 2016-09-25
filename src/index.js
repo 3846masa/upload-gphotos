@@ -240,11 +240,9 @@ class GPhotos {
     await new Photo({ id: insertedPhotoId, _parent: this}).removeFromAlbum();
 
     this._logger.info(`AlbumID is ${ albumId }.`);
-    return new Album({
-      id: albumId,
-      title: albumName,
-      _parent: this
-    });
+
+    const album = await this.searchAlbum(albumId);
+    return album;
   }
 
   /**
@@ -325,7 +323,7 @@ class GPhotos {
     return results;
   }
 
-  async _sendMutateQuery (queryNum, query) {
+  async _sendMutateQuery (queryNum, query, ignoreResult = false) {
     const reqQuery = [
       'af.maf',
       [[
@@ -339,6 +337,8 @@ class GPhotos {
 
     const url = 'https://photos.google.com/_/PhotosUi/mutate';
     const body = await this._sendQuery(url, reqQuery);
+
+    if (ignoreResult) return true;
 
     const results =
       (await JSON.parseAsync(body.substr(4)))[0][1][String(queryNum)];

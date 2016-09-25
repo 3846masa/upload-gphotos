@@ -45,7 +45,7 @@ class GPhotosPhoto {
   async removeFromAlbum () {
     const query = [ [ this.id ], [] ];
 
-    await this._gphotos._sendMutateQuery(85381832, query)
+    await this._gphotos._sendMutateQuery(85381832, query, true)
       .catch((_err) => {
         this._logger.error(`Failed to remove photo. ${_err.message}`);
         return Promise.reject(_err);
@@ -60,7 +60,7 @@ class GPhotosPhoto {
   async remove () {
     const query = [[], 1, [this.id], 4, null, []];
 
-    await this._gphotos._sendMutateQuery(73931313, query)
+    await this._gphotos._sendMutateQuery(73931313, query, true)
       .catch((_err) => {
         this._logger.error(`Failed to remove photo. ${_err.message}`);
         return Promise.reject(_err);

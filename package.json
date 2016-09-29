@@ -44,7 +44,7 @@
     "babel-cli": "6.16.0",
     "babel-eslint": "7.0.0",
     "babel-plugin-add-module-exports": "0.2.1",
-    "babel-plugin-transform-async-to-module-method": "6.8.0",
+    "babel-plugin-transform-async-to-module-method": "6.16.0",
     "babel-plugin-transform-class-properties": "6.11.5",
     "babel-plugin-transform-es2015-modules-commonjs": "6.14.0",
     "babel-preset-es2015-node4": "2.1.0",

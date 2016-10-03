@@ -51,7 +51,7 @@
     "esdoc": "0.4.8",
     "esdoc-es7-plugin": "0.0.3",
     "esdoc-importpath-plugin": "0.0.1",
-    "eslint": "3.7.0",
+    "eslint": "3.7.1",
     "nexe": "1.1.2",
     "npm-check-updates": "2.8.1",
     "npm-run-all": "3.1.0",

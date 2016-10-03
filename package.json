@@ -53,7 +53,7 @@
     "esdoc-importpath-plugin": "0.0.1",
     "eslint": "3.7.0",
     "nexe": "1.1.2",
-    "npm-check-updates": "2.8.0",
+    "npm-check-updates": "2.8.1",
     "npm-run-all": "3.1.0",
     "sane": "1.4.1",
     "source-map-support": "0.4.3"

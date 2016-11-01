@@ -51,6 +51,10 @@ class GPhotosAlbum {
 
     const results =
       await this._gphotos._sendMutateQuery(79956622, query)
+        .catch(() => {
+          // Fallback: If album is shared, use 99484733.
+          return this._gphotos._sendMutateQuery(99484733, query);
+        })
         .catch((_err) => {
           this._logger.error(`Failed to add photo in album. ${_err.message}`);
           return Promise.reject(_err);

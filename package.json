@@ -1,6 +1,6 @@
 {
   "name": "upload-gphotos",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Upload to Google Photos",
   "main": "lib/index.js",
   "bin": {

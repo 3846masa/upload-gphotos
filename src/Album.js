@@ -53,6 +53,10 @@ class GPhotosAlbum {
       await this._gphotos._sendMutateQuery(79956622, query)
         .catch(() => {
           // Fallback: If album is shared, use 99484733.
+          const query = [
+            [ this.id ],
+            [ 2, null, [[ photos.map((p) => p.id) ]], null, null, [], [] ]
+          ];
           return this._gphotos._sendMutateQuery(99484733, query);
         })
         .catch((_err) => {
@@ -60,7 +64,7 @@ class GPhotosAlbum {
           return Promise.reject(_err);
         });
 
-    const insertedPhotoIds = results[1];
+    const insertedPhotoIds = results[1] || [];
     return insertedPhotoIds;
   }
 

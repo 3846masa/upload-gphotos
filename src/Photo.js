@@ -4,7 +4,7 @@ class GPhotosPhoto {
    */
   constructor ({
     id, uploadedAt, createdAt, type = 'photo',
-    title, length, width, height, rawUrl, uploadInfo, _parent
+    title, length, width, height, filesize, rawUrl, uploadInfo, _parent
   }) {
     /** @type {String} */
     this.id = id;
@@ -20,6 +20,8 @@ class GPhotosPhoto {
     this.width = width;
     /** @type {?number} */
     this.height = height;
+    /** @type {?number} */
+    this.filesize = filesize;
     /** @type {?String} */
     this.rawUrl = rawUrl;
     /** @type {String} */
@@ -66,6 +68,33 @@ class GPhotosPhoto {
         return Promise.reject(_err);
       });
 
+    return true;
+  }
+
+  /**
+   * @return {Promise<boolean,Error>}
+   */
+  async update () {
+    const queries = [[this.id, 1],
+                     [this.id, null, null, true]];
+    const results =
+      await Promise.all([
+        this._gphotos._sendDataQuery(73756775, queries[0]),
+        this._gphotos._sendDataQuery(74881883, queries[1])
+      ])
+      .catch((_err) => {
+        this._logger.error(`Failed to update. ${_err.message}`);
+        return Promise.reject(_err);
+      });
+    this.title = results[0][0][2];
+    this.filesize = results[0][0][5];
+    this.type = (!results[1][0][12]) ? 'photo' : 'video';
+    this.createdAt = new Date(results[1][0][2]);
+    this.uploadedAt = new Date(results[1][0][5]);
+    this.length = (this.type === 'video') ? results[1][0][12]['76647426'][0] : null;
+    this.width = (this.type === 'photo') ? results[1][0][1][1] : results[1][0][12]['76647426'][2];
+    this.height = (this.type === 'photo') ? results[1][0][1][2] : results[1][0][12]['76647426'][3];
+    this.rawUrl = results[1][0][1][0];
     return true;
   }
 }

@@ -97,6 +97,23 @@ class GPhotosPhoto {
     this.rawUrl = results[1][0][1][0];
     return true;
   }
+
+  /**
+   * @param {Date} createdDate
+   * @param {?number} [timezone=null]
+   * @return {Promise<boolean,Error>}
+   */
+  async editCreatedDate (createdDate, timezone=null) {
+    const query = [[[this.id, null, timezone, (createdDate.getTime()-this.createdAt.getTime())/1000]]];
+
+    await this._gphotos._sendMutateQuery(115094896, query, true)
+      .catch((_err) => {
+        this._logger.error(`Failed to edit created date. ${_err.message}`);
+        return Promise.reject(_err);
+      });
+
+    return true;
+  }
 }
 
 export default GPhotosPhoto;

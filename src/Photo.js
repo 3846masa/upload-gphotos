@@ -4,7 +4,7 @@ class GPhotosPhoto {
    */
   constructor ({
     id, uploadedAt, createdAt, type = 'photo',
-    title, length, width, height, filesize, rawUrl, uploadInfo, _parent
+    title, length, width, height, fileSize, rawUrl, uploadInfo, _parent
   }) {
     /** @type {String} */
     this.id = id;
@@ -21,7 +21,7 @@ class GPhotosPhoto {
     /** @type {?number} */
     this.height = height;
     /** @type {?number} */
-    this.filesize = filesize;
+    this.fileSize = fileSize;
     /** @type {?String} */
     this.rawUrl = rawUrl;
     /** @type {String} */
@@ -39,6 +39,25 @@ class GPhotosPhoto {
         writable: true
       }
     });
+  }
+
+  /**
+   * @return {Object}
+   */
+  static parseInfo (data) {
+    const type = (data[1].pop()[0] === 15658734) ? 'video' : 'photo';
+    const lastIdx = data.length - 1;
+
+    return {
+      id: data[0],
+      createdAt: new Date(data[2]),
+      uploadedAt: new Date(data[5]),
+      type: type,
+      length: (type === 'video') ? data[lastIdx]['76647426'][0] : null,
+      width: (type === 'photo') ? data[1][1] : data[lastIdx]['76647426'][2],
+      height: (type === 'photo') ? data[1][2] : data[lastIdx]['76647426'][3],
+      rawUrl: data[1][0],
+    };
   }
 
   /**
@@ -72,30 +91,31 @@ class GPhotosPhoto {
   }
 
   /**
-   * @return {Promise<boolean,Error>}
+   * @return {Promise<GPhotosPhoto,Error>}
    */
-  async update () {
-    const queries = [[this.id, 1],
-                     [this.id, null, null, true]];
+  async fetchInfo () {
+    const queries = {
+      '73756775': [this.id, 1],
+      '74881883': [this.id, null, null, true],
+    };
+
     const results =
-      await Promise.all([
-        this._gphotos._sendDataQuery(73756775, queries[0]),
-        this._gphotos._sendDataQuery(74881883, queries[1])
-      ])
+      await Promise.all(
+        Object.keys(queries)
+          .map((key) => this._gphotos._sendDataQuery(key, queries[key]))
+      )
       .catch((_err) => {
-        this._logger.error(`Failed to update. ${_err.message}`);
+        this._logger.error(`Failed to fetch info. ${_err.message}`);
         return Promise.reject(_err);
       });
+
     this.title = results[0][0][2];
-    this.filesize = results[0][0][5];
-    this.type = (!results[1][0][12]) ? 'photo' : 'video';
-    this.createdAt = new Date(results[1][0][2]);
-    this.uploadedAt = new Date(results[1][0][5]);
-    this.length = (this.type === 'video') ? results[1][0][12]['76647426'][0] : null;
-    this.width = (this.type === 'photo') ? results[1][0][1][1] : results[1][0][12]['76647426'][2];
-    this.height = (this.type === 'photo') ? results[1][0][1][2] : results[1][0][12]['76647426'][3];
-    this.rawUrl = results[1][0][1][0];
-    return true;
+    this.fileSize = results[0][0][5];
+
+    const info = GPhotosPhoto.parseInfo(results[1][0]);
+    Object.assign(this, info);
+
+    return this;
   }
 
   /**

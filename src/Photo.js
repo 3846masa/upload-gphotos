@@ -119,19 +119,22 @@ class GPhotosPhoto {
   }
 
   /**
-   * @param {Date} createdDate
-   * @param {?number} [timezone=null]
+   * @param {Date|number|string} createdDate
+   * @param {?number} [timezoneSec=null] seconds of timezone
    * @return {Promise<boolean,Error>}
    */
-  async editCreatedDate (createdDate, timezone=null) {
-    const query = [[[this.id, null, timezone, (createdDate.getTime()-this.createdAt.getTime())/1000]]];
+  async modifyCreatedDate (createdDate, timezoneSec = null) {
+    const diffTime =
+      Math.round((new Date(createdDate).getTime() - this.createdAt.getTime()) / 1000);
+    const query = [[[this.id, null, timezoneSec, diffTime]]];
 
     await this._gphotos._sendMutateQuery(115094896, query, true)
       .catch((_err) => {
-        this._logger.error(`Failed to edit created date. ${_err.message}`);
+        this._logger.error(`Failed to modify created date. ${_err.message}`);
         return Promise.reject(_err);
       });
 
+    await this.fetchInfo();
     return true;
   }
 }

@@ -4,7 +4,7 @@ class GPhotosPhoto {
    */
   constructor ({
     id, uploadedAt, createdAt, type = 'photo',
-    title, length, width, height, rawUrl, uploadInfo, _parent
+    title, length, width, height, fileSize, rawUrl, uploadInfo, _parent
   }) {
     /** @type {String} */
     this.id = id;
@@ -20,6 +20,8 @@ class GPhotosPhoto {
     this.width = width;
     /** @type {?number} */
     this.height = height;
+    /** @type {?number} */
+    this.fileSize = fileSize;
     /** @type {?String} */
     this.rawUrl = rawUrl;
     /** @type {String} */
@@ -37,6 +39,25 @@ class GPhotosPhoto {
         writable: true
       }
     });
+  }
+
+  /**
+   * @return {Object}
+   */
+  static parseInfo (data) {
+    const type = (data[1].pop()[0] === 15658734) ? 'video' : 'photo';
+    const lastIdx = data.length - 1;
+
+    return {
+      id: data[0],
+      createdAt: new Date(data[2]),
+      uploadedAt: new Date(data[5]),
+      type: type,
+      length: (type === 'video') ? data[lastIdx]['76647426'][0] : null,
+      width: (type === 'photo') ? data[1][1] : data[lastIdx]['76647426'][2],
+      height: (type === 'photo') ? data[1][2] : data[lastIdx]['76647426'][3],
+      rawUrl: data[1][0],
+    };
   }
 
   /**
@@ -66,6 +87,54 @@ class GPhotosPhoto {
         return Promise.reject(_err);
       });
 
+    return true;
+  }
+
+  /**
+   * @return {Promise<GPhotosPhoto,Error>}
+   */
+  async fetchInfo () {
+    const queries = {
+      '73756775': [this.id, 1],
+      '74881883': [this.id, null, null, true],
+    };
+
+    const results =
+      await Promise.all(
+        Object.keys(queries)
+          .map((key) => this._gphotos._sendDataQuery(key, queries[key]))
+      )
+      .catch((_err) => {
+        this._logger.error(`Failed to fetch info. ${_err.message}`);
+        return Promise.reject(_err);
+      });
+
+    this.title = results[0][0][2];
+    this.fileSize = results[0][0][5];
+
+    const info = GPhotosPhoto.parseInfo(results[1][0]);
+    Object.assign(this, info);
+
+    return this;
+  }
+
+  /**
+   * @param {Date|number|string} createdDate
+   * @param {?number} [timezoneSec=null] seconds of timezone
+   * @return {Promise<boolean,Error>}
+   */
+  async modifyCreatedDate (createdDate, timezoneSec = null) {
+    const diffTime =
+      Math.round((new Date(createdDate).getTime() - this.createdAt.getTime()) / 1000);
+    const query = [[[this.id, null, timezoneSec, diffTime]]];
+
+    await this._gphotos._sendMutateQuery(115094896, query, true)
+      .catch((_err) => {
+        this._logger.error(`Failed to modify created date. ${_err.message}`);
+        return Promise.reject(_err);
+      });
+
+    await this.fetchInfo();
     return true;
   }
 }

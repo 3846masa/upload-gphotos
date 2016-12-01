@@ -42,6 +42,7 @@ class GPhotosPhoto {
   }
 
   /**
+   * @param  {Object} data
    * @return {Object}
    */
   static parseInfo (data) {

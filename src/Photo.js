@@ -46,8 +46,11 @@ class GPhotosPhoto {
    * @return {Object}
    */
   static parseInfo (data) {
-    const type = (data[1].pop()[0] === 15658734) ? 'video' : 'photo';
     const lastIdx = data.length - 1;
+    const type =
+      (!data[lastIdx]) ? 'photo' :
+      ('76647426' in data[lastIdx]) ? 'video' :
+      ('139842850' in data[lastIdx]) ? 'animation_gif' : 'photo';
 
     return {
       id: data[0],
@@ -55,8 +58,8 @@ class GPhotosPhoto {
       uploadedAt: new Date(data[5]),
       type: type,
       length: (type === 'video') ? data[lastIdx]['76647426'][0] : null,
-      width: (type === 'photo') ? data[1][1] : data[lastIdx]['76647426'][2],
-      height: (type === 'photo') ? data[1][2] : data[lastIdx]['76647426'][3],
+      width: (type === 'video') ? data[lastIdx]['76647426'][2] : data[1][1],
+      height: (type === 'video') ? data[lastIdx]['76647426'][3] : data[1][2],
       rawUrl: data[1][0],
     };
   }

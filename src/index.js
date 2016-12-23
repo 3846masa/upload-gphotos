@@ -276,19 +276,9 @@ class GPhotos {
           return Promise.reject(_err);
         });
 
-    const photoList = results[0].map((al) => {
-      const type = (!al[12]) ? 'photo' : 'video';
-      return new Photo({
-        id: al[0],
-        createdAt: al[2],
-        uploadedAt: al[5],
-        type: type,
-        length: (type === 'video') ? al[12]['76647426'][0] : null,
-        width: (type === 'photo') ? al[1][1] : al[12]['76647426'][2],
-        height: (type === 'photo') ? al[1][2] : al[12]['76647426'][3],
-        rawUrl: al[1][0],
-        _parent: this
-      });
+    const photoList = results[0].map((info) => {
+      const data = Object.assign(Photo.parseInfo(info), { _parent: this });
+      return new Photo(data);
     });
 
     return { list: photoList, next: results[1] };

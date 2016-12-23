@@ -32,7 +32,7 @@
     "eslint": "^3.12.1",
     "fs-promise": "1.0.0",
     "jsdom": "9.9.1",
-    "log4js": "1.0.1",
+    "log4js": "1.1.0",
     "progbar": "1.1.1",
     "progress": "1.1.8",
     "read": "1.0.7",

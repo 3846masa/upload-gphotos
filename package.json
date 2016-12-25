@@ -48,7 +48,7 @@
     "babel-plugin-transform-class-properties": "6.19.0",
     "babel-plugin-transform-es2015-modules-commonjs": "6.18.0",
     "babel-preset-es2015-node4": "2.1.1",
-    "esdoc": "0.4.8",
+    "esdoc": "0.5.0",
     "esdoc-es7-plugin": "0.0.3",
     "esdoc-importpath-plugin": "0.0.1",
     "eslint": "3.9.0",

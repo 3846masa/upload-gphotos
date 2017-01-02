@@ -213,7 +213,7 @@ class GPhotos {
           to: new Date(info[2][1])
         },
         items_count: info[3],
-        _parent: this
+        _gphotos: this
       });
     });
 
@@ -237,7 +237,7 @@ class GPhotos {
 
     const [ albumId, [ insertedPhotoId ] ] = results;
 
-    await new Photo({ id: insertedPhotoId, _parent: this}).removeFromAlbum();
+    await new Photo({ id: insertedPhotoId, _gphotos: this}).removeFromAlbum();
 
     this._logger.info(`AlbumID is ${ albumId }.`);
 
@@ -277,7 +277,7 @@ class GPhotos {
         });
 
     const photoList = results[0].map((info) => {
-      const data = Object.assign(Photo.parseInfo(info), { _parent: this });
+      const data = Object.assign(Photo.parseInfo(info), { _gphotos: this });
       return new Photo(data);
     });
 
@@ -450,7 +450,7 @@ class GPhotos {
       title: uploadInfo.title,
       rawUrl: uploadInfo.url,
       uploadInfo: uploadInfo,
-      _parent: this
+      _gphotos: this
     });
     return uploadedPhoto;
   }

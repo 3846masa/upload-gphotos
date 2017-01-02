@@ -4,7 +4,7 @@ class GPhotosPhoto {
    */
   constructor ({
     id, uploadedAt, createdAt, type = 'photo',
-    title, length, width, height, fileSize, rawUrl, uploadInfo, _parent
+    title, length, width, height, fileSize, rawUrl, uploadInfo, _gphotos
   }) {
     /** @type {String} */
     this.id = id;
@@ -29,10 +29,10 @@ class GPhotosPhoto {
 
     Object.defineProperties(this, {
       '_gphotos': {
-        value: _parent
+        value: _gphotos
       },
       '_logger': {
-        value: _parent._logger
+        value: _gphotos._logger
       },
       '_uploadInfo': {
         value: uploadInfo,

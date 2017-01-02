@@ -6,7 +6,7 @@ class GPhotosAlbum {
    */
   constructor ({
     id, title, period = { from: new Date(0), to: new Date(0) },
-    items_count = 0, _parent
+    items_count = 0, _gphotos
   }) {
     /** @type {String} */
     this.id = id;
@@ -25,10 +25,10 @@ class GPhotosAlbum {
 
     Object.defineProperties(this, {
       '_gphotos': {
-        value: _parent
+        value: _gphotos
       },
       '_logger': {
-        value: _parent._logger
+        value: _gphotos._logger
       }
     });
   }
@@ -84,7 +84,7 @@ class GPhotosAlbum {
         });
 
     const photoList = results[1].map((info) => {
-      const data = Object.assign(Photo.parseInfo(info), { _parent: this._gphotos });
+      const data = Object.assign(Photo.parseInfo(info), { _gphotos: this._gphotos });
       return new Photo(data);
     });
 

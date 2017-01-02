@@ -11,9 +11,6 @@
           "to": "lib/"
         }]
       }
-    },
-    {
-      "name": "esdoc-es7-plugin"
     }
   ]
 }

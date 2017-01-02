@@ -1,9 +1,14 @@
 {
-  "presets": [ "es2015-node4" ],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 4
+      }
+    }]
+  ],
   "plugins": [
     "transform-class-properties", [
-      "transform-async-to-module-method",
-      {
+      "transform-async-to-module-method", {
         "module": "co",
         "method": "wrap"
       }

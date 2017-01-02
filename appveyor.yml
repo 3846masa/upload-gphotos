@@ -4,7 +4,7 @@ branches:
 
 os: Visual Studio 2015
 environment:
-  nodejs_version: "4"
+  nodejs_version: "6"
 
 platform:
   - x86

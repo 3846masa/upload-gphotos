@@ -84,7 +84,7 @@ class GPhotosAlbum {
         });
 
     const photoList = results[1].map((info) => {
-      const data = Object.assign(Photo.parseInfo(info), { _parent: this });
+      const data = Object.assign(Photo.parseInfo(info), { _parent: this._gphotos });
       return new Photo(data);
     });
 

@@ -65,6 +65,9 @@ class GPhotos {
       },
       '_logger': {
         value: this.options.logger || log4js.getLogger()
+      },
+      '_gphotos': {
+        value: this
       }
     });
   }
@@ -213,7 +216,7 @@ class GPhotos {
           to: new Date(info[2][1])
         },
         items_count: info[3],
-        _gphotos: this
+        _gphotos: this._gphotos
       });
     });
 
@@ -237,7 +240,7 @@ class GPhotos {
 
     const [ albumId, [ insertedPhotoId ] ] = results;
 
-    await new Photo({ id: insertedPhotoId, _gphotos: this}).removeFromAlbum();
+    await new Photo({ id: insertedPhotoId, _gphotos: this._gphotos }).removeFromAlbum();
 
     this._logger.info(`AlbumID is ${ albumId }.`);
 
@@ -277,7 +280,7 @@ class GPhotos {
         });
 
     const photoList = results[0].map((info) => {
-      const data = Object.assign(Photo.parseInfo(info), { _gphotos: this });
+      const data = Object.assign(Photo.parseInfo(info), { _gphotos: this._gphotos });
       return new Photo(data);
     });
 
@@ -450,7 +453,7 @@ class GPhotos {
       title: uploadInfo.title,
       rawUrl: uploadInfo.url,
       uploadInfo: uploadInfo,
-      _gphotos: this
+      _gphotos: this._gphotos
     });
     return uploadedPhoto;
   }

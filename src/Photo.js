@@ -4,7 +4,7 @@ class GPhotosPhoto {
    */
   constructor ({
     id, uploadedAt, createdAt, type = 'photo',
-    title, length, width, height, fileSize, rawUrl, uploadInfo, _gphotos
+    title, description, length, width, height, fileSize, rawUrl, uploadInfo, _gphotos
   }) {
     /** @type {String} */
     this.id = id;
@@ -14,6 +14,8 @@ class GPhotosPhoto {
     this.createdAt = new Date(createdAt);
     /** @type {?String} */
     this.title = title;
+    /** @type {?String} */
+    this.description = description;
     /** @type {?number} */
     this.length = length;
     /** @type {?number} */
@@ -113,6 +115,7 @@ class GPhotosPhoto {
         return Promise.reject(_err);
       });
 
+    this.description = results[0][0][1];
     this.title = results[0][0][2];
     this.fileSize = results[0][0][5];
 
@@ -135,6 +138,23 @@ class GPhotosPhoto {
     await this._gphotos._sendMutateQuery(115094896, query, true)
       .catch((_err) => {
         this._logger.error(`Failed to modify created date. ${_err.message}`);
+        return Promise.reject(_err);
+      });
+
+    await this.fetchInfo();
+    return true;
+  }
+
+  /**
+   * @param {string} description
+   * @return {Promise<boolean,Error>}
+   */
+  async modifyDescription (description) {
+    const query = [null, description, this.id];
+
+    await this._gphotos._sendMutateQuery(74747338, query, true)
+      .catch((_err) => {
+        this._logger.error(`Failed to modify description. ${_err.message}`);
         return Promise.reject(_err);
       });
 

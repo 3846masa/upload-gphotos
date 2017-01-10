@@ -451,6 +451,7 @@ class GPhotos {
       createdAt: uploadInfo.timestamp * 1000,
       type: uploadInfo.kind,
       title: uploadInfo.title,
+      description: uploadInfo.description,
       rawUrl: uploadInfo.url,
       uploadInfo: uploadInfo,
       _gphotos: this._gphotos

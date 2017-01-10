@@ -64,4 +64,5 @@ const { u: username, p: password, _: files, a: albumName } = argParser.argv;
   console.info(JSON.stringify(photos, null, 2));
 })().catch(function (err) {
   console.error(err.stack);
+  process.abort();
 });

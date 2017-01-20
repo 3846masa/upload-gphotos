@@ -2,7 +2,7 @@ import packageInfo from '../package.json';
 import reqJSONTemplateGenerator from './utils/request-json-template-generator';
 
 // import winston, { Logger } from 'winston';
-import log4js from 'log4js';
+// import log4js from 'log4js';
 import request from 'request-promise';
 import fs from 'fs-promise';
 import ProgressBar from 'progress';
@@ -38,7 +38,7 @@ class GPhotos {
    * @param  {String} params.password
    * @param  {Object} [params.options]
    * @param  {boolean} [params.options.progressbar]
-   * @param  {winston.Logger|log4js.Logger} [params.options.logger]
+   * @param  {winston.Logger|log4js.Logger|console} [params.options.logger]
    */
   constructor ({ username, password, options }) {
     /** @type {String} */
@@ -64,7 +64,7 @@ class GPhotos {
         })
       },
       '_logger': {
-        value: this.options.logger || log4js.getLogger()
+        value: this.options.logger || console
       },
       '_gphotos': {
         value: this

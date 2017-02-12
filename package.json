@@ -29,7 +29,7 @@
     "cheerio": "0.22.0",
     "co": "4.6.0",
     "colors": "1.1.2",
-    "fs-promise": "1.0.0",
+    "fs-promise": "2.0.0",
     "jsdom": "9.11.0",
     "log4js": "1.1.0",
     "progbar": "1.1.1",

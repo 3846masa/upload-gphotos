@@ -54,7 +54,7 @@
     "npm-check-updates": "2.10.5",
     "npm-run-all": "4.0.2",
     "sane": "1.6.0",
-    "source-map-support": "0.4.13"
+    "source-map-support": "0.4.14"
   },
   "scripts": {
     "build": "npm-run-all --parallel build:code build:doc",

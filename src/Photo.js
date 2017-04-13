@@ -50,7 +50,7 @@ class GPhotosPhoto {
   static parseInfo (data) {
     const lastIdx = data.length - 1;
     const type =
-      (!data[lastIdx]) ? 'photo' :
+      (!data[lastIdx] || typeof data[lastIdx] !== 'object') ? 'photo' :
       ('76647426' in data[lastIdx]) ? 'video' :
       ('139842850' in data[lastIdx]) ? 'animation_gif' : 'photo';
 

@@ -205,9 +205,9 @@ class GPhotos {
           this._logger.error(`Failed to fetch albums. ${_err.message}`);
           return Promise.reject(_err);
         });
-    
+
     if (!results[0]) {
-      return { list: [], next: undefined }
+      return { list: [], next: undefined };
     }
 
     const albumList = results[0].map((al) => {

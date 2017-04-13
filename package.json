@@ -38,7 +38,7 @@
     "request": "2.81.0",
     "request-promise": "4.2.0",
     "tough-cookie": "2.3.2",
-    "yargs": "7.0.2"
+    "yargs": "7.1.0"
   },
   "devDependencies": {
     "babel-cli": "6.24.1",

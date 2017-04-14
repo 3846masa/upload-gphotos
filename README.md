@@ -56,7 +56,7 @@ Uploaded successfully!
     "id": "AF1QipNbxR9mSqgG2Z23bxxxxxxxxxxxxxx_yzS8",
     "uploadedAt": "2017-04-14T06:26:48.080Z",
     "createdAt": "2017-04-14T06:26:47.892Z",
-    "title": "2017-04-14_11-37-28.mp4",
+    "title": "photo-1.jpg",
     "description": "",
     "rawUrl": "https://lh3.googleusercontent.com/-7GrpTUxxxxxx/WPBrxxxxxx/AAAAAAxxxxx/o92LsGKWej87x0baba4kZeksc43Oxxxxxxxxx/photo-1.jpg",
     "type": "photo"
@@ -65,7 +65,7 @@ Uploaded successfully!
     "id": "AF1QipNbxR9mSqgG2Z23bxxxxxxxxxxxxxx_yzS8",
     "uploadedAt": "2017-04-14T06:26:48.080Z",
     "createdAt": "2017-04-14T06:26:47.892Z",
-    "title": "2017-04-14_11-37-28.mp4",
+    "title": "video-1.mp4",
     "description": "",
     "rawUrl": "https://lh3.googleusercontent.com/-7GrpTUxxxxxx/WPBrxxxxxx/AAAAAAxxxxx/o92LsGKWej87x0baba4kZeksc43Oxxxxxxxxx/video-1.mp4",
     "type": "video"

@@ -6,7 +6,7 @@ import read from './utils/read';
 import GPhotos from './index';
 
 argParser.demand(1);
-argParser.usage(`Usage: ${path.basename(process.execPath)} [-u username] [-p password] [-a albumname] file [...]`);
+argParser.usage(`Usage: upload-gphotos [-u username] [-p password] [-a albumname] file [...]`);
 argParser.options('u', {
   alias: 'username',
   desc: 'Google account username.'

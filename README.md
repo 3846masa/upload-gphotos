@@ -35,6 +35,44 @@ Download your platform's binary via [GitHub Releases].
 $ upload-gphotos -u USERNAME -p PASSWORD file [...]
 ```
 
+Example
+
+```bash
+$ upload-gphotos -u example@gmail.com -p StR0ngP@ssw0rd photo-1.jpg video-1.mp4
+```
+
+Output will look like this
+
+```text
+Success to login!
+UserID is 109088602193233xxxxxx.
+atParam is AKP94S0mEotS20MjQfEKVOwW1aZPxxxxxx:1492151xxxxxx.
+
+Uploading [=======================================================================================] 100% 0.0s
+
+Uploaded successfully!
+[
+  {
+    "id": "AF1QipNbxR9mSqgG2Z23bxxxxxxxxxxxxxx_yzS8",
+    "uploadedAt": "2017-04-14T06:26:48.080Z",
+    "createdAt": "2017-04-14T06:26:47.892Z",
+    "title": "2017-04-14_11-37-28.mp4",
+    "description": "",
+    "rawUrl": "https://lh3.googleusercontent.com/-7GrpTUxxxxxx/WPBrxxxxxx/AAAAAAxxxxx/o92LsGKWej87x0baba4kZeksc43Oxxxxxxxxx/photo-1.jpg",
+    "type": "photo"
+  },
+  {
+    "id": "AF1QipNbxR9mSqgG2Z23bxxxxxxxxxxxxxx_yzS8",
+    "uploadedAt": "2017-04-14T06:26:48.080Z",
+    "createdAt": "2017-04-14T06:26:47.892Z",
+    "title": "2017-04-14_11-37-28.mp4",
+    "description": "",
+    "rawUrl": "https://lh3.googleusercontent.com/-7GrpTUxxxxxx/WPBrxxxxxx/AAAAAAxxxxx/o92LsGKWej87x0baba4kZeksc43Oxxxxxxxxx/video-1.mp4",
+    "type": "video"
+  }
+]
+```
+
 ## Library
 This is also node.js library.
 

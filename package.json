@@ -46,7 +46,7 @@
     "babel-plugin-transform-async-to-module-method": "6.24.1",
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
-    "babel-preset-env": "1.3.3",
+    "babel-preset-env": "1.4.0",
     "esdoc": "0.5.2",
     "esdoc-importpath-plugin": "0.1.1",
     "eslint": "3.19.0",

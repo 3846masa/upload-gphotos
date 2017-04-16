@@ -253,6 +253,15 @@ class GPhotos {
   }
 
   /**
+   * @param {String} id
+   * @return {Promise<GPhotosPhoto,Error>}
+   */
+  async fetchPhotoById (id) {
+    const photo = new Photo({ id: id, _gphotos: this });
+    return await photo.fetchInfo();
+  }
+
+  /**
    * @return {Promise<GPhotosPhoto[],Error>}
    */
   async fetchAllPhotoList () {

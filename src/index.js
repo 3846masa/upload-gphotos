@@ -366,19 +366,34 @@ class GPhotos {
    */
   async upload (filePath, fileName) {
     fileName = fileName || path.basename(filePath);
-
     const fileStat =
       await fs.stat(filePath)
         .catch((err) => {
           this._logger.error(`"${ fileName }" can't access.`);
           return Promise.reject(err);
         });
+    const fileReadStream = fs.createReadStream(filePath);
+    return await this.uploadFromStream(fileReadStream, fileStat.size, fileName);
+  }
+
+  /**
+   * @param {stream.Readable} stream
+   * @param {number} size
+   * @param {?String} [fileName]
+   * @return {Promise<GPhotosPhoto,Error>}
+   */
+  async uploadFromStream (stream, size, fileName) {
+    stream.pause();
+
+    if (!size || typeof size !== 'number') {
+      throw new Error('Invalid arguments.');
+    }
 
     const sendInfo = reqJSONTemplateGenerator();
     for (let field of sendInfo.createSessionRequest.fields) {
       if ('external' in field) {
-        field.external.filename = fileName;
-        field.external.size = fileStat.size;
+        field.external.filename = fileName || Date.now().toString(10);
+        field.external.size = size;
       } else if ('inlined' in field) {
         const name = field.inlined.name;
         if (name !== 'effective_id' && name !== 'owner_name') continue;
@@ -409,20 +424,18 @@ class GPhotos {
     const sendUrl =
       serverStatus.sessionStatus.externalFieldTransfers[0].putInfo.url;
 
-    const fileReadStream = fs.createReadStream(filePath);
-
     if (this.options.progressbar) {
       const progressBar = new ProgressBar(colors.green('Uploading') + ' [:bar] :percent :etas', {
         complete: '=',
         incomplete: '\x20',
         width: Math.max(0, process.stdout.columns - 25),
-        total: fileStat.size
+        total: size
       });
-      fileReadStream.on('open', () => process.stderr.write('\n'));
-      fileReadStream.on('data', (chunk) => {
+      stream.on('open', () => process.stderr.write('\n'));
+      stream.on('data', (chunk) => {
         progressBar.tick(chunk.length);
       });
-      fileReadStream.on('end', () => process.stderr.write('\n'));
+      stream.on('end', () => process.stderr.write('\n'));
     }
 
     const resultRes = await this._request({
@@ -432,7 +445,7 @@ class GPhotos {
         'Content-Type': 'application/octet-stream',
         'X-HTTP-Method-Override': 'PUT'
       },
-      body: fileReadStream
+      body: stream
     });
 
     const result = JSON.parse(resultRes.body);

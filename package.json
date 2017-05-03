@@ -30,7 +30,7 @@
     "co": "4.6.0",
     "colors": "1.1.2",
     "fs-promise": "2.0.2",
-    "jsdom": "10.0.0",
+    "jsdom": "10.1.0",
     "log4js": "1.1.1",
     "progbar": "1.2.0",
     "progress": "2.0.0",
@@ -38,7 +38,7 @@
     "request": "2.81.0",
     "request-promise": "4.2.0",
     "tough-cookie": "2.3.2",
-    "yargs": "7.1.0"
+    "yargs": "8.0.1"
   },
   "devDependencies": {
     "babel-cli": "6.24.1",
@@ -54,7 +54,7 @@
     "npm-check-updates": "2.11.0",
     "npm-run-all": "4.0.2",
     "sane": "1.6.0",
-    "source-map-support": "0.4.14"
+    "source-map-support": "0.4.15"
   },
   "scripts": {
     "build": "npm-run-all --parallel build:code build:doc",

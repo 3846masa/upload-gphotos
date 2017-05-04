@@ -3,7 +3,6 @@ branches:
   only:
     - /v[\d\.]+/
 
-sudo: true
 language: node_js
 node_js:
   - "6"
@@ -14,19 +13,14 @@ before_install:
   - node -p 'process.platform + "@" + process.arch'
   - npm --version
 
-  # Cleanup the output of npm
-  - npm config set progress false
-  - npm config set spin false
-  - npm install -g npm@3
-
 install:
   # ensure source install works
-  - npm install
+  - yarn install
 
 script:
   - npm run build
   # if publishing, do it
-  - find ./binaries -maxdepth 1 -type f -name "*.exe" | xargs -I{} sh -c 'mkdir binaries/$(basename -s ".exe" "{}"); mv "{}" binaries/$(basename -s ".exe" "{}")/upload-gphotos.exe'
+  - find ./binaries -maxdepth 1 -type f -name "*.exe" | xargs -I{} sh -c 'mkdir binaries/$(basename "{}" ".exe"); mv "{}" binaries/$(basename "{}" ".exe")/upload-gphotos.exe'
   - find ./binaries -maxdepth 1 -type f | xargs -I{} sh -c 'mv "{}" /tmp/upload-gphotos; mkdir binaries/$(basename "{}"); mv /tmp/upload-gphotos binaries/$(basename "{}")/upload-gphotos'
   - ls ./binaries | xargs -I{} zip -rjq "{}".zip "./binaries/{}"
 

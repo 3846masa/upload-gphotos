@@ -42,7 +42,7 @@
     "build:code": "npm-run-all build:babel build:pkg",
     "build:babel": "babel src --out-dir lib",
     "build:doc": "esdoc -c ./esdoc.json",
-    "build:pkg": "pkg -t node4-mac-x64,node4-linux-x64,node4-linux-x86,node4-win-x86,node4-win-x64 --out-dir ./binaries .",
+    "build:pkg": "pkg -t node6-macos-x64,node6-linux-x64,node6-win-x64 --out-dir ./binaries .",
     "watch": "sane \"npm-run-all --parallel build:babel build:doc\" src --glob='**/*.js'",
     "watch:babel": "npm run build:babel --source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"

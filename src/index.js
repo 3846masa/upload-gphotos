@@ -10,7 +10,7 @@ import path from 'path';
 import colors from 'colors/safe';
 import qs from 'querystring';
 import cheerio from 'cheerio';
-import jsdom from './utils/jsdom-async';
+import { JSDOM, VirtualConsole } from 'jsdom';
 import JSON from './utils/json-async';
 
 import Album from './Album';
@@ -136,7 +136,10 @@ class GPhotos {
       return Promise.reject(new Error('Can\'t access to Google Photos'));
     }
 
-    const window = await jsdom.envAsync(gPhotosTopPageRes.body);
+    const window = new JSDOM(gPhotosTopPageRes.body, {
+      virtualConsole: new VirtualConsole(),
+      runScripts: 'dangerously',
+    }).window;
     if (window.WIZ_global_data && window.WIZ_global_data.SNlM0e) {
       const params = window.WIZ_global_data;
       window.close();

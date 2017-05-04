@@ -1,12 +1,11 @@
 # upload-gphotos
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/3846masa/upload-gphotos.svg)](https://greenkeeper.io/)
-
 [![NPM](https://nodei.co/npm/upload-gphotos.png?compact=true)](https://nodei.co/npm/upload-gphotos/)
 
 [![NPM VERSION](https://img.shields.io/npm/v/upload-gphotos.svg?style=flat-square)](https://www.npmjs.com/package/upload-gphotos)
 [![GITHUB RELEASE](https://img.shields.io/github/release/3846masa/upload-gphotos.svg?style=flat-square)](https://github.com/3846masa/upload-gphotos/releases)
 [![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](./LICENSE)
+[![Greenkeeper badge](https://img.shields.io/badge/Greenkeeper-enabled-brightgreen.svg?style=flat-square)](https://greenkeeper.io/)
 
 Google Photos にファイルをアップロード．
 

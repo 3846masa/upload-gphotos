@@ -2,7 +2,6 @@
 branches:
   only:
     - /v[\d\.]+/
-    - /^greenkeeper/.*$/
 
 sudo: false
 language: cpp

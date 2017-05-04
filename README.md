@@ -1,5 +1,7 @@
 # upload-gphotos
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/3846masa/upload-gphotos.svg)](https://greenkeeper.io/)
+
 [![NPM](https://nodei.co/npm/upload-gphotos.png?compact=true)](https://nodei.co/npm/upload-gphotos/)
 
 [![NPM VERSION](https://img.shields.io/npm/v/upload-gphotos.svg?style=flat-square)](https://www.npmjs.com/package/upload-gphotos)

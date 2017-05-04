@@ -45,6 +45,7 @@ lib
 doc
 tmp
 upload-gphotos
+binaries
 
 # Others
 test.js

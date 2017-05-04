@@ -6,25 +6,6 @@
   "bin": {
     "upload-gphotos": "lib/cli.js"
   },
-  "nexe": {
-    "input": "./lib/cli.js",
-    "output": "upload-gphotos^$",
-    "nodeMakeArgs": [
-      "-j",
-      "4"
-    ],
-    "browserify": {
-      "requires": [],
-      "excludes": [
-        "canvas"
-      ]
-    },
-    "runtime": {
-      "framework": "node",
-      "version": "6.9.2",
-      "ignoreFlags": true
-    }
-  },
   "dependencies": {
     "cheerio": "0.22.0",
     "co": "4.6.0",
@@ -50,21 +31,26 @@
     "esdoc": "0.5.2",
     "esdoc-importpath-plugin": "0.1.2",
     "eslint": "3.19.0",
-    "nexe": "1.1.2",
     "npm-check-updates": "2.11.0",
     "npm-run-all": "4.0.2",
+    "pkg": "^3.0.2",
     "sane": "1.6.0",
     "source-map-support": "0.4.15"
   },
   "scripts": {
     "build": "npm-run-all --parallel build:code build:doc",
-    "build:code": "npm-run-all build:babel build:nexe",
+    "build:code": "npm-run-all build:babel build:pkg",
     "build:babel": "babel src --out-dir lib",
     "build:doc": "esdoc -c ./esdoc.json",
-    "build:nexe": "nexe",
+    "build:pkg": "pkg -t node4-mac-x64,node4-linux-x64,node4-linux-x86,node4-win-x86,node4-win-x64 --out-dir ./binaries .",
     "watch": "sane \"npm-run-all --parallel build:babel build:doc\" src --glob='**/*.js'",
     "watch:babel": "npm run build:babel --source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/log4js/lib/appenders/*.js"
+    ]
   },
   "files": [
     "lib",

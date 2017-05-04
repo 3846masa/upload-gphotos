@@ -3,6 +3,7 @@ branches:
   only:
     - /v[\d\.]+/
 
+sudo: true
 language: node_js
 node_js:
   - "6"

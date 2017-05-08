@@ -17,7 +17,7 @@
     "progress": "2.0.0",
     "read": "1.0.7",
     "request": "2.81.0",
-    "request-promise": "4.2.0",
+    "request-promise": "4.2.1",
     "tough-cookie": "2.3.2",
     "yargs": "8.0.1"
   },

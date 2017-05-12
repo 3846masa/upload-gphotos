@@ -30,7 +30,8 @@ class GPhotos {
    *   password: 'YOUR_PASSWORD',
    *   options: {
    *     progressbar: true,
-   *     logger: new wiston.Logger();
+   *     logger: new wiston.Logger();,
+   *     fromCli : false
    *   }
    * });
    * @param  {Object} params
@@ -72,6 +73,18 @@ class GPhotos {
     });
   }
 
+
+  /**
+   * 
+   * @param {string} message 
+   * @returns {Promise<undefined,Error>}
+   * 
+   */
+  async _errorHandler(message){
+    this._logger.error(message);
+    return Promise.reject(new Error(message));
+  }
+
   /**
    * @example
    * gphotos.login()
@@ -84,6 +97,28 @@ class GPhotos {
    * @return {Promise<GPhotos,Error>}
    */
   async login () {
+    await this._preLogin();
+    const params = await this._fetchGPhotosParams();
+    if (!params.S06Grb) {
+      return Promise.reject(new Error('Can\'t fetch userId.'));
+    }
+    this._userId = params.S06Grb;
+
+    this._logger.info('Success to login!');
+    this._logger.info(`UserID is ${ this._userId }.`);
+
+    await this.fetchAtParam();
+
+    return this;
+  }
+
+
+  /**
+   * 
+   * @returns 
+   * 
+   */
+  async _preLogin() {
     const loginUrl = 'https://accounts.google.com/ServiceLoginAuth';
     const { body: loginHTML } = await this._request.get(loginUrl);
 
@@ -98,22 +133,95 @@ class GPhotos {
     const loginRes = await this._request.post(loginUrl, { form: loginData });
 
     if (loginRes.statusCode !== 302) {
-      this._logger.error('Failed to login...');
-      return Promise.reject(new Error('Failed to login'));
+      return this._errorHandler('Failed to login');
     }
 
-    const params = await this._fetchGPhotosParams();
-    if (!params.S06Grb) {
-      return Promise.reject(new Error('Can\'t fetch userId.'));
+    const urlFound = cheerio.load(loginRes.body)('a').attr('href');
+
+    if (this._isChallengedUrl(urlFound)){
+      return this._errorHandler('There is a challenge request, please use cli to solve it (eg: ./upload-gphotos -c -u xxx -p xxx)');
     }
-    this._userId = params.S06Grb;
+    return urlFound;
+  }
 
-    this._logger.info('Success to login!');
-    this._logger.info(`UserID is ${ this._userId }.`);
+  
+  /**
+   * 
+   * @returns {boolean} true if there i
+   * 
+   */
+  async findSMSChallenge() {
+    const urlFound = await this._preLogin();
+    if (this._isChallengedUrl(urlFound)){
+      await this._getSMSChallenge(urlFound);
+      return true;
+    }else{
+      this._logger.info('Great news, no challenge to solve !');
+      return false;
+    }
+  }
 
-    await this.fetchAtParam();
+  /**
+   * @param  {string} url
+   */
+  _isChallengedUrl(url){
+    return url.toLowerCase().indexOf('/checkcookie') === -1;
+  }
+  
+  /**
+   * @param  {node} $ (full document)
+   * @param  {node} $form (form node)
+   */
+  _getFullFormActionUrl($, $form){
+    return $('base').first().attr('href').replace(/\/$/g, '') + $form.attr('action');
+  }
+  
+  /**
+   * @param {any} challengeUrl 
+   */
+  async _getSMSChallenge(challengeUrl){
+    let challengeReq = await this._request.get(challengeUrl);
 
-    return this;
+    if (challengeReq.statusCode !== 200){
+      return this._errorHandler('Can\'t handle challenge.');
+    }
+
+    let $ = cheerio.load(challengeReq.body);
+    const $form = $('form').first();
+    const sendTo = this._getFullFormActionUrl($, $form);
+    let challengeData = Object.assign(qs.parse($form.serialize()), {SendMethod: 'SMS'});
+    const challengeRes = await this._request.post(sendTo, { form: challengeData });
+
+    if (challengeRes.statusCode !== 200) {
+      return this._errorHandler('Failed to get SMS for challenge');
+    }
+
+    this._logger.info('SMS is sent to :', $form.find('b').text());
+    this._challengeRes = challengeRes;
+  }
+
+  /**
+   * @param  {string} pin code received by SMS
+   */
+  async sendPinFromSMS(pin){
+    if (this._challengeRes){
+      const $ = cheerio.load(this._challengeRes.body);
+      const $form = $('form').first();
+      const smsFormData = Object.assign(qs.parse($form.serialize()), {Pin:pin});
+
+      delete smsFormData.SendMethod;
+
+      const sendTo = this._getFullFormActionUrl($, $form);
+      const smsFormRes = await this._request.post(sendTo, { form: smsFormData });
+      
+      if (smsFormRes.statusCode !== 200) {
+        return this._errorHandler('Failed to send SMS');
+      }
+
+      this._logger.info('Done, You\'re all set !');
+    }else{
+      this._logger.error('Oops, No challenge found :(');
+    }
   }
 
   /**

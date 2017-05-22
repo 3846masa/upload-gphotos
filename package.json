@@ -34,7 +34,7 @@
     "npm-check-updates": "2.11.1",
     "npm-run-all": "4.0.2",
     "pkg": "^3.0.2",
-    "sane": "1.6.0",
+    "sane": "1.7.0",
     "source-map-support": "0.4.15"
   },
   "scripts": {

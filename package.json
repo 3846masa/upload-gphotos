@@ -33,7 +33,7 @@
     "eslint": "3.19.0",
     "npm-check-updates": "2.11.2",
     "npm-run-all": "4.0.2",
-    "pkg": "^3.0.2",
+    "pkg": "^4.0.0",
     "sane": "1.7.0",
     "source-map-support": "0.4.15"
   },

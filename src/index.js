@@ -236,7 +236,7 @@ class GPhotos {
    */
   async createAlbum (albumName) {
     const latestPhoto = await this._fetchLatestPhoto();
-    const query = [ [ latestPhoto.id ], null, albumName ];
+    const query = [ [ latestPhoto.id ], null, albumName.toString() ];
 
     const results =
       await this._sendMutateQuery(79956622, query)

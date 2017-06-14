@@ -17,7 +17,7 @@ log4js.configure({
 const logger = log4js.getLogger();
 
 argParser.demand(1);
-argParser.usage(`Usage: upload-gphotos [-u username] [-p password] [-a albumname] file [...]`);
+argParser.usage(`Usage: upload-gphotos file [...] [-u username] [-p password] [-a albumname]`);
 argParser.options('u', {
   alias: 'username',
   desc: 'Google account username.'
@@ -28,11 +28,12 @@ argParser.options('p', {
 });
 argParser.options('a', {
   alias: 'album',
+  array: true,
   desc: 'Album where uploaded files put.'
 });
 argParser.help('h').alias('h', 'help');
 
-const { u: username, p: password, _: files, a: albumName } = argParser.argv;
+const { u: username, p: password, _: files, a: albumNameList } = argParser.argv;
 
 (async () => {
   await Promise.all(files.map((path) => fs.access(path)))
@@ -51,14 +52,20 @@ const { u: username, p: password, _: files, a: albumName } = argParser.argv;
   });
   await gphotos.login();
 
-  const photos = [];
-  for (let path of files) {
-    photos.push(await gphotos.upload(path));
+  const albumList = [];
+  for (let albumName of albumNameList) {
+    const album = await gphotos.searchOrCreateAlbum(albumName);
+    albumList.push(album);
   }
 
-  if (albumName) {
-    const album = await gphotos.searchOrCreateAlbum(albumName);
-    await album.addPhotos(photos);
+  const photos = [];
+  for (let path of files) {
+    const photo = await gphotos.upload(path);
+
+    for (let album of albumList) {
+      await album.addPhoto(photo);
+    }
+    photos.push(photo);
   }
 
   console.info(JSON.stringify(photos, null, 2));

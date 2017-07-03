@@ -11,7 +11,7 @@
     "co": "4.6.0",
     "colors": "1.1.2",
     "fs-promise": "2.0.3",
-    "jsdom": "11.0.0",
+    "jsdom": "11.1.0",
     "log4js": "1.1.1",
     "progbar": "1.2.0",
     "progress": "2.0.0",

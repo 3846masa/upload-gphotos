@@ -12,7 +12,7 @@
     "colors": "1.1.2",
     "fs-promise": "2.0.3",
     "jsdom": "11.0.0",
-    "log4js": "1.1.1",
+    "log4js": "2.0.0",
     "progbar": "1.2.0",
     "progress": "2.0.0",
     "read": "1.0.7",

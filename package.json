@@ -28,7 +28,7 @@
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
     "babel-preset-env": "1.6.0",
-    "esdoc": "0.5.2",
+    "esdoc": "1.0.1",
     "esdoc-importpath-plugin": "0.1.4",
     "eslint": "3.19.0",
     "npm-check-updates": "2.12.0",

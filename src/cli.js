@@ -53,16 +53,16 @@ const { u: username, p: password, _: files, a: albumNameList } = argParser.argv;
   await gphotos.login();
 
   const albumList = [];
-  if (albumNameList) {
-    for (let albumName of albumNameList) {
-      const album = await gphotos.searchOrCreateAlbum(albumName);
-      albumList.push(album);
-    }
-  }
-
   const photos = [];
   for (let path of files) {
     const photo = await gphotos.upload(path);
+
+    if (albumNameList && albumList.length !== albumNameList.length) {
+      for (let albumName of albumNameList) {
+        const album = await gphotos.searchOrCreateAlbum(albumName);
+        albumList.push(album);
+      }
+    }
 
     for (let album of albumList) {
       await album.addPhoto(photo);

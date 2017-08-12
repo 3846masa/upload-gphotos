@@ -6,13 +6,21 @@ import read from './utils/read';
 import GPhotos from './index';
 
 log4js.configure({
-  appenders: [{
-    type: 'console',
-    layout: {
-      type: 'pattern',
-      pattern: '%[%p%] %m'
+  appenders: {
+    console: {
+      type: 'console',
+      layout: {
+        type: 'pattern',
+        pattern: '%[%p%] %m'
+      },
+    },
+  },
+  categories: {
+    default: {
+      appenders: ['console'],
+      level: 'all'
     }
-  }]
+  }
 });
 const logger = log4js.getLogger();
 

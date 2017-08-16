@@ -26,7 +26,7 @@
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-transform-async-to-module-method": "6.24.1",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "babel-preset-env": "1.6.0",
     "esdoc": "0.5.2",
     "esdoc-importpath-plugin": "0.1.4",

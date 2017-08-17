@@ -37,7 +37,7 @@
     "npm-run-all": "4.0.2",
     "pkg": "^4.0.0",
     "sane": "2.0.0",
-    "source-map-support": "0.4.15"
+    "source-map-support": "0.4.16"
   },
   "scripts": {
     "build": "npm-run-all --parallel build:code build:doc",

@@ -52,4 +52,4 @@ await album.addPhoto(photo);
 
 See [Documentation].
 
-[Documentation]: https://doc.esdoc.org/github.com/3846masa/upload-gphotos
+[Documentation]: https://3846masa.github.io/upload-gphotos

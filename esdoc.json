@@ -1,8 +1,15 @@
 {
   "source": "./src",
   "destination": "./doc",
-  "title": "upload-gphotos | ESDoc",
   "plugins": [
+    {
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "brand": {
+          "title": "upload-gphotos | ESDoc"
+        }
+      }
+    },
     {
       "name": "esdoc-importpath-plugin",
       "option": {

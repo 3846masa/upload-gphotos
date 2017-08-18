@@ -218,6 +218,7 @@ class GPhotos {
       return new Album({
         id: al.shift(),
         title: info[1],
+		key: info[5],
         period: {
           from: new Date(info[2][0]),
           to: new Date(info[2][1])
@@ -254,6 +255,33 @@ class GPhotos {
     const album = await this.searchAlbum(albumId);
     return album;
   }
+  
+  
+   /**
+   * @param  {String} albumNormalId
+   * @return {Promise<GPhotosAlbum,Error>}
+   */
+  async shareAlbum (albumNormalId) {
+    const query = [null,null,[null,true,null,null,true,null,[[[1,1],false],[[1,2],false],[[2,1],true],[[2,2],true]]],[1,[[albumNormalId],[1,2,3]],[],null,null,[],[]]];
+	
+    const results =
+      await this._sendMutateQuery(84378251, query)
+        .catch((_err) => {
+          this._logger.error(`Failed to share album. ${_err.message}`);
+          return Promise.reject(_err);
+        });
+		
+    const shareResult = [{ 
+	id: results[0],
+	shortUrl: results[1],
+	albumUrl:results[5],
+	Key: results[5].split("?")[1].split("&")[0].substr(4)
+	}];
+		
+
+    return shareResult;
+  }
+  
 
   /**
    * @param {String} id

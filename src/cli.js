@@ -62,9 +62,12 @@ const { u: username, p: password, _: files, a: albumNameList } = argParser.argv;
 
   const albumList = [];
   const photos = [];
+  const photosup = [];
+  const shareAlbumList = [];
+  
   for (let path of files) {
     const photo = await gphotos.upload(path);
-
+	
     if (albumNameList && albumList.length !== albumNameList.length) {
       for (let albumName of albumNameList) {
         const album = await gphotos.searchOrCreateAlbum(albumName);
@@ -73,12 +76,29 @@ const { u: username, p: password, _: files, a: albumNameList } = argParser.argv;
     }
 
     for (let album of albumList) {
-      await album.addPhoto(photo);
+    const  photoalbum = await album.addPhoto(photo);
+	 if (album.key == null) {
+		 const sharealbum = await gphotos.shareAlbum(album.id);
+		 shareAlbumList.push(sharealbum);
+	 }
+	 photos.push({id:photoalbum});
     }
-    photos.push(photo);
+    
+	photosup.push(photo);
+	
   }
 
+  console.info('Album');
+  console.info(JSON.stringify(albumList, null, 2));
+  
+  console.info('Share Album Info');
+  console.info(JSON.stringify(shareAlbumList, null, 2));
+  
+  console.info('Photo');
+  console.info(JSON.stringify(photosup, null, 2));
+  console.info('Photo in Album');
   console.info(JSON.stringify(photos, null, 2));
+  
 })().catch(function (err) {
   logger.error(err.stack);
   process.abort();

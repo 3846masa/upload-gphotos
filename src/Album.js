@@ -5,13 +5,15 @@ class GPhotosAlbum {
    * @ignore
    */
   constructor ({
-    id, title, period = { from: new Date(0), to: new Date(0) },
+    id, title,key, period = { from: new Date(0), to: new Date(0) },
     items_count = 0, _gphotos
   }) {
     /** @type {String} */
     this.id = id;
     /** @type {String} */
     this.title = title;
+	/** @type {String} */
+    this.key = key;
     /**
      * @type {Object}
      * @property {Date} from
@@ -55,7 +57,7 @@ class GPhotosAlbum {
           // Fallback: If album is shared, use 99484733.
           const query = [
             [ this.id ],
-            [ 2, null, [[ photos.map((p) => p.id) ]], null, null, [], [] ]
+            [ 2, null, [[ photos.map((p) => p.id) ]], null, null, [], [] ],this.key,[null,null,null,null,[null,[]]]
           ];
           return this._gphotos._sendMutateQuery(99484733, query);
         })
@@ -63,8 +65,10 @@ class GPhotosAlbum {
           this._logger.error(`Failed to add photo in album. ${_err.message}`);
           return Promise.reject(_err);
         });
-
-    const insertedPhotoIds = results[1] || [];
+		
+    const filterid = results[1] || [];
+	const insertedPhotoIds = (!filterid || typeof filterid[0] !== 'object') ? filterid : (filterid[0].length>10) ? filterid : [filterid[0][0]];
+	
     return insertedPhotoIds;
   }
 

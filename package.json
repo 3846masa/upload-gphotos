@@ -19,7 +19,7 @@
     "request": "2.81.0",
     "request-promise": "4.2.1",
     "tough-cookie": "2.3.2",
-    "yargs": "8.0.1"
+    "yargs": "9.0.1"
   },
   "devDependencies": {
     "babel-cli": "6.24.1",

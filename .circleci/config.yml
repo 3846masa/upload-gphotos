@@ -32,13 +32,24 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - restore_cache:
           key: v1-build-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
             npm publish
+  deploy-doc:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - restore_cache:
+          key: v1-build-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          command: |
+            git config --global user.email 3846masaihro+git@gmail.com
+            git config --global user.name 3846masa
             npm run release:doc
   deploy-release:
     docker:
@@ -59,6 +70,14 @@ workflows:
             tags:
               only: /.*/
       - deploy-npm:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v\d+(\.\d+)*/
+            branches:
+              ignore: /.*/
+      - deploy-doc:
           requires:
             - build
           filters:

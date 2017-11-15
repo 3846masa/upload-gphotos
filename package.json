@@ -16,13 +16,16 @@
   "bin": {
     "upload-gphotos": "lib/cli.js"
   },
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "npm-run-all -s build:clean build:tsc build:pkg",
     "build:clean": "rimraf lib doc",
     "build:doc": "typedoc --out doc src",
     "build:pkg": "pkg -t node6-macos-x64,node6-linux-x64,node6-win-x64 --out-dir ./binaries .",
     "build:tsc": "tsc",
+    "release:doc": "gh-pages -d doc -r https://github.com/3846masa/upload-gphotos.git",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -51,15 +54,22 @@
     "@types/progress": "^2.0.0",
     "@types/tough-cookie": "^2.3.2",
     "@types/yargs": "^8.0.2",
+    "gh-pages": "^1.0.0",
     "npm-run-all": "^4.1.2",
     "pkg": "^4.3.0-beta.1",
     "rimraf": "^2.6.2",
     "typedoc": "^0.9.0",
     "typescript": "^2.6.1"
   },
-  "keywords": ["google photos", "googlephotos", "upload"],
+  "keywords": [
+    "google photos",
+    "googlephotos",
+    "upload"
+  ],
   "pkg": {
-    "assets": ["node_modules/log4js/lib/appenders/*.js"]
+    "assets": [
+      "node_modules/log4js/lib/appenders/*.js"
+    ]
   },
   "types": "lib/index.d.js"
 }

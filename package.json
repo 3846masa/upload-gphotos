@@ -20,7 +20,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "npm-run-all -s build:clean build:tsc build:pkg",
+    "build": "npm-run-all -s build:clean build:tsc build:pkg build:doc",
     "build:clean": "rimraf lib doc",
     "build:doc": "typedoc --out doc src",
     "build:pkg": "pkg -t node6-macos-x64,node6-linux-x64,node6-win-x64 --out-dir ./binaries .",

@@ -50,6 +50,7 @@ jobs:
           command: |
             git config --global user.email 3846masaihro+git@gmail.com
             git config --global user.name 3846masa
+            touch doc/.nojekyll
             npm run release:doc
   deploy-release:
     docker:

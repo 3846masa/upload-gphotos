@@ -25,7 +25,7 @@
     "build:doc": "typedoc --out doc src",
     "build:pkg": "pkg -t node6-macos-x64,node6-linux-x64,node6-win-x64 --out-dir ./binaries .",
     "build:tsc": "tsc",
-    "release:doc": "gh-pages -d doc -r https://github.com/3846masa/upload-gphotos.git",
+    "release:doc": "gh-pages -d doc -t -r https://github.com/3846masa/upload-gphotos.git",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

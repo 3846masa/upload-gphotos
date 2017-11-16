@@ -73,6 +73,7 @@ class GPhotos {
         jar: this.options.jar,
         withCredentials: true,
         responseType: 'text',
+        transformResponse: [data => data],
       })
     );
   }
@@ -130,15 +131,13 @@ class GPhotos {
 
   /** @private */
   async sendQuery(url: string, query: any) {
-    const queryRes = await this.axios.request({
-      method: 'POST',
-      url: url,
-      data: qs.stringify({
+    const queryRes = await this.axios.post(
+      url,
+      qs.stringify({
         'f.req': JSON.stringify(query),
         at: this.params.at,
-      }),
-      responseType: 'text',
-    });
+      })
+    );
 
     if (queryRes.status !== 200) {
       return Promise.reject(new Error(`${queryRes.statusText}`));
@@ -349,21 +348,21 @@ class GPhotos {
       }
     }
 
-    const serverStatusRes = await this.axios.request({
-      method: 'POST',
-      url: 'https://photos.google.com/_/upload/photos/resumable?authuser=0',
-      data: JSON.stringify(sendInfo),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      responseType: 'json',
-    });
+    const serverStatusRes = await this.axios.post(
+      'https://photos.google.com/_/upload/photos/resumable?authuser=0',
+      JSON.stringify(sendInfo),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+      }
+    );
 
     if (serverStatusRes.status !== 200) {
       return Promise.reject(new Error(`Server Error: ${serverStatusRes.status}`));
     }
 
-    const serverStatus = serverStatusRes.data;
+    const serverStatus = JSON.parse(serverStatusRes.data);
     if (!('sessionStatus' in serverStatus)) {
       return Promise.reject(new Error('Server Error: sessionStatus is not found.'));
     }
@@ -381,18 +380,14 @@ class GPhotos {
       stream.on('end', () => process.stderr.write('\n'));
     }
 
-    const resultRes = await this.axios.request({
-      method: 'POST',
-      url: sendUrl,
-      data: stream,
+    const resultRes = await this.axios.post(sendUrl, stream, {
       headers: {
         'Content-Type': 'application/octet-stream',
         'X-HTTP-Method-Override': 'PUT',
       },
-      responseType: 'json',
     });
 
-    const result = resultRes.data;
+    const result = JSON.parse(resultRes.data);
     if (result.sessionStatus.state !== 'FINALIZED') {
       return Promise.reject(new Error(`Upload Error: ${result.sessionStatus.state}`));
     }

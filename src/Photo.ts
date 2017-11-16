@@ -19,16 +19,16 @@ export default class GPhotosPhoto {
     return this._uploadInfo;
   }
   set uploadInfo(info: any) {
-    Object.defineProperty(this, '_uploadInfo', info);
+    Object.defineProperty(this, '_uploadInfo', { value: info });
   }
   get gphotos() {
     return this._gphotos;
   }
   set gphotos(gphotos: GPhotos) {
-    Object.defineProperty(this, '_gphotos', gphotos);
+    Object.defineProperty(this, '_gphotos', { value: gphotos });
   }
 
-  constructor(opts: Partial<GPhotosPhoto>) {
+  constructor(opts: Partial<GPhotosPhoto> & { gphotos: GPhotos }) {
     Object.assign(this, opts);
   }
 

@@ -13,7 +13,7 @@ export default class GPhotosAlbum {
     return this._gphotos;
   }
   set gphotos(gphotos: GPhotos) {
-    Object.defineProperty(this, '_gphotos', gphotos);
+    Object.defineProperty(this, '_gphotos', { value: gphotos });
   }
 
   constructor(opts: Partial<GPhotosAlbum> & { gphotos: GPhotos }) {

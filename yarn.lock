@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@3846masa/axios-cookiejar-support@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@3846masa/axios-cookiejar-support/-/axios-cookiejar-support-0.1.3.tgz#eddd47ec1230ec9a8a295b3beccb2437f817c244"
+"@3846masa/axios-cookiejar-support@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3846masa/axios-cookiejar-support/-/axios-cookiejar-support-0.2.0.tgz#cae675ff558763184a6850fd27fcd1f7b07cf3dc"
   dependencies:
     "@types/tough-cookie" "^2.3.1"
     pify "3.0.0"

@@ -7,7 +7,7 @@ import * as ProgressBar from 'progress';
 import * as colors from 'colors';
 import { JSDOM, VirtualConsole, DOMWindow as _DOMWindow } from 'jsdom';
 import Axios, { AxiosInstance } from 'axios';
-import cookieJarSupport = require('@3846masa/axios-cookiejar-support');
+import cookieJarSupport from '@3846masa/axios-cookiejar-support';
 
 import uploadInfoTemplate from './util/uploadInfoTemplate';
 import Album from './Album';
@@ -171,10 +171,17 @@ class GPhotos {
   async postLogin() {
     const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin');
 
-    const loginData = Object.assign(qs.parse(cheerio.load(loginHTML)('form').serialize()), {
-      Email: this.username,
-      Passwd: this.password,
-    });
+    const loginData = Object.assign(
+      qs.parse(
+        cheerio
+          .load(loginHTML)('form')
+          .serialize()
+      ),
+      {
+        Email: this.username,
+        Passwd: this.password,
+      }
+    );
 
     const loginRes = await this.axios.post(
       'https://accounts.google.com/signin/challenge/sl/password',

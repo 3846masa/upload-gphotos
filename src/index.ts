@@ -330,7 +330,7 @@ class GPhotos {
   }
 
   async searchOrCreateAlbum(albumName: string) {
-    return this.searchAlbum(albumName).then(album => album || this.createAlbum(albumName));
+    return this.searchAlbum(albumName).catch(() => this.createAlbum(albumName));
   }
 
   async upload(filePath: string, _fileName?: string) {

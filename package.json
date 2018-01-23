@@ -41,7 +41,7 @@
     "log4js": "^2.3.12",
     "progress": "^2.0.0",
     "tough-cookie": "^2.3.3",
-    "yargs": "^10.0.3"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.5",

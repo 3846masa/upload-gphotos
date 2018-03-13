@@ -5,11 +5,11 @@ import * as cheerio from 'cheerio';
 import * as tough from 'tough-cookie';
 import * as ProgressBar from 'progress';
 import * as colors from 'colors';
-import { JSDOM, VirtualConsole, DOMWindow as _DOMWindow } from 'jsdom';
 import Axios, { AxiosInstance } from 'axios';
 import cookieJarSupport from '@3846masa/axios-cookiejar-support';
 
 import uploadInfoTemplate from './util/uploadInfoTemplate';
+import extractTokensFromDOM from './util/extractTokensFromDOM';
 import Album from './Album';
 import Photo from './Photo';
 
@@ -29,13 +29,6 @@ export interface GPhotosOptions {
 export interface GPhotosParams {
   at: string;
   userId: string;
-}
-
-interface DOMWindow extends _DOMWindow {
-  WIZ_global_data?: {
-    SNlM0e?: string;
-    S06Grb?: string;
-  };
 }
 
 class GPhotos {
@@ -201,20 +194,15 @@ class GPhotos {
       return Promise.reject(new Error("Can't access to Google Photos"));
     }
 
-    const window: DOMWindow = new JSDOM(gPhotosTopPageRes.data, {
-      virtualConsole: new VirtualConsole(),
-      runScripts: 'dangerously',
-    }).window;
-
-    if (!window.WIZ_global_data || !window.WIZ_global_data.SNlM0e || !window.WIZ_global_data.S06Grb) {
+    const tokens = extractTokensFromDOM(gPhotosTopPageRes.data);
+    if (!tokens.SNlM0e || !tokens.S06Grb) {
       return Promise.reject(new Error("Can't fetch GPhotos params."));
     }
 
     const params = {
-      at: window.WIZ_global_data.SNlM0e,
-      userId: window.WIZ_global_data.S06Grb,
+      at: tokens.SNlM0e,
+      userId: tokens.S06Grb,
     };
-    window.close();
     return params;
   }
 

@@ -2,12 +2,12 @@ import GPhotos from './';
 import Photo from './Photo';
 
 export default class GPhotosAlbum {
-  public id: string;
-  public title: string;
-  public period: { from: Date; to: Date };
+  public id!: string;
+  public title!: string;
+  public period!: { from: Date; to: Date };
   public items_count = 0;
   public type = 'album';
-  private _gphotos: GPhotos;
+  private _gphotos!: GPhotos;
 
   get gphotos() {
     return this._gphotos;

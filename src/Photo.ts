@@ -1,19 +1,19 @@
 import GPhotos from './';
 
 export default class GPhotosPhoto {
-  public id: string;
-  public uploadedAt: Date;
-  public createdAt: Date;
+  public id!: string;
+  public uploadedAt!: Date;
+  public createdAt!: Date;
   public type = 'photo';
-  public title: string;
-  public description: string;
-  public length: number;
-  public width: number;
-  public height: number;
-  public fileSize: number;
-  public rawUrl: string;
+  public title!: string;
+  public description!: string;
+  public length!: number;
+  public width!: number;
+  public height!: number;
+  public fileSize!: number;
+  public rawUrl!: string;
   private _uploadInfo: any;
-  private _gphotos: GPhotos;
+  private _gphotos!: GPhotos;
 
   get uploadInfo() {
     return this._uploadInfo;

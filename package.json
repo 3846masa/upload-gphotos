@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@3846masa/axios-cookiejar-support": "^0.3.1",
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "colors": "^1.1.2",
     "configstore": "^3.1.1",
@@ -39,12 +39,12 @@
     "esprima": "^4.0.0",
     "esrecurse": "^4.2.1",
     "fs-extra": "^5.0.0",
-    "inquirer": "^4.0.0",
+    "inquirer": "^5.1.0",
     "log4js": "^2.3.12",
     "progress": "^2.0.0",
     "static-eval": "^2.0.0",
     "tough-cookie": "^2.3.3",
-    "yargs": "^10.0.3"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.5",
@@ -53,18 +53,18 @@
     "@types/escodegen": "^0.0.6",
     "@types/esprima": "^4.0.1",
     "@types/fs-extra": "^5.0.0",
-    "@types/inquirer": "^0.0.36",
+    "@types/inquirer": "^0.0.37",
     "@types/log4js": "^2.3.5",
-    "@types/node": "^8.0.51",
+    "@types/node": "^9.4.7",
     "@types/progress": "^2.0.0",
     "@types/static-eval": "^0.2.30",
     "@types/tough-cookie": "^2.3.2",
-    "@types/yargs": "^10.0.0",
+    "@types/yargs": "^11.0.0",
     "gh-pages": "^1.0.0",
     "npm-run-all": "^4.1.2",
     "pkg": "^4.3.0-beta.1",
     "rimraf": "^2.6.2",
-    "typedoc": "^0.9.0",
+    "typedoc": "^0.11.1",
     "typescript": "^2.6.1"
   },
   "keywords": [

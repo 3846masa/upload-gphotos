@@ -36,7 +36,7 @@ class GPhotos {
   private password?: string;
   private options: GPhotosOptions;
   private axios: AxiosInstance;
-  private params: GPhotosParams;
+  private params!: GPhotosParams;
 
   /**
    * @example

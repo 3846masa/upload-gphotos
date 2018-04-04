@@ -9,7 +9,7 @@
 
 Google Photos にファイルをアップロード．
 
-Upload photo to Google Photos (Unofficial).
+Upload photos to Google Photos (Unofficial).
 
 ## Preparation
 
@@ -17,6 +17,14 @@ Upload photo to Google Photos (Unofficial).
 
 1. Turn on "Allowing less secure apps to access your account"
     - https://support.google.com/accounts/answer/6010255
+2. (Optional) Login Google via browser if you haven't login from current IP address.
+    - I recommend to login via VNC using [fcwu/docker-ubuntu-vnc-desktop].
+    - Other way: using [apenwarr/sshuttle]
+        - FYI: [issues#113(comments)]
+
+[fcwu/docker-ubuntu-vnc-desktop]: https://github.com/fcwu/docker-ubuntu-vnc-desktop
+[apenwarr/sshuttle]: https://github.com/apenwarr/sshuttle
+[issues#113(comments)]: https://github.com/3846masa/upload-gphotos/issues/113#issuecomment-277141489
 
 ## Installation
 
@@ -32,7 +40,7 @@ Download your platform's binary via [GitHub Releases].
 
 ## Usage
 ```
-$ upload-gphotos file [...] -u USERNAME -p PASSWORD
+$ upload-gphotos [<file>...] [--quiet] [-r <retry>] [-u <username>] [-p <password>] [-a <albumname>]
 ```
 
 ## Library
@@ -52,3 +60,21 @@ This is also Node.js library.
 See [Documentation].
 
 [Documentation]: https://3846masa.github.io/upload-gphotos/modules/_index_.html
+
+## FAQ
+
+- **Q.** Is it support to login with SMS / 2FA / Application password?
+    - **A.** No. I have no plan to support. See [issues#196].
+- **Q.** I can't login, Why?
+    - **A.** Please try to login via browser, first.
+    - Google will ban to login from unknown IP.
+- **Q.** When uploading large / many files, Uploading was failed.
+    - **A.** It maybe limitations of Google Photos.
+    - Limitations is below. (FYI: [issues#246], [issues#256(comments)])
+        - 75 MB or 100 megapixels / 1 photo
+        - 10 GB / 1 video
+        - Total bandwidth maybe 10 GB / 1 day
+
+[issues#196]: https://github.com/3846masa/upload-gphotos/issues/196
+[issues#246]: https://github.com/3846masa/upload-gphotos/issues/246
+[issues#256(comments)]: https://github.com/3846masa/upload-gphotos/issues/256#issuecomment-356458407

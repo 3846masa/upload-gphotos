@@ -39,7 +39,7 @@
     "esprima": "^4.0.0",
     "esrecurse": "^4.2.1",
     "fs-extra": "^5.0.0",
-    "inquirer": "^5.1.0",
+    "inquirer": "^6.0.0",
     "log4js": "^2.3.12",
     "progress": "^2.0.0",
     "static-eval": "^2.0.0",

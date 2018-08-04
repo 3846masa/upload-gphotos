@@ -162,23 +162,50 @@ class GPhotos {
 
   /** @private */
   async postLogin() {
-    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin');
+    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin', {
+      params: {
+        continue: 'https://accounts.google.com/ManageAccount',
+        rip: 1,
+        nojavascript: 1,
+      },
+    });
 
-    const loginData = Object.assign(
-      qs.parse(
-        cheerio
-          .load(loginHTML)('form')
-          .serialize()
-      ),
-      {
+    const { data: lookupHTML } = await this.axios.post(
+      'https://accounts.google.com/signin/v1/lookup',
+      qs.stringify({
+        ...qs.parse(
+          cheerio
+            .load(loginHTML)('form')
+            .serialize()
+        ),
         Email: this.username,
-        Passwd: this.password,
+        Passwd: '',
+        signIn: 'Next',
+      }),
+      {
+        headers: {
+          Referer: 'https://accounts.google.com/ServiceLogin',
+        },
       }
     );
 
     const loginRes = await this.axios.post(
       'https://accounts.google.com/signin/challenge/sl/password',
-      qs.stringify(loginData)
+      qs.stringify({
+        ...qs.parse(
+          cheerio
+            .load(lookupHTML)('form')
+            .serialize()
+        ),
+        Email: this.username,
+        Passwd: this.password,
+        signIn: 'Sign in',
+      }),
+      {
+        headers: {
+          Referer: 'https://accounts.google.com/signin/v1/lookup',
+        },
+      }
     );
 
     if (loginRes.status !== 302) {

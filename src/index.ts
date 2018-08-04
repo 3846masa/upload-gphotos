@@ -13,7 +13,7 @@ import extractTokensFromDOM from './util/extractTokensFromDOM';
 import Album from './Album';
 import Photo from './Photo';
 
-// const packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
+const packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 
 export interface GPhotosConstructorParams {
   username?: string;
@@ -59,8 +59,7 @@ class GPhotos {
     this.axios = cookieJarSupport(
       Axios.create({
         headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36', // `Mozilla/5.0 UploadGPhotos/${packageInfo.version}`,
+          'User-Agent': `Mozilla/5.0 UploadGPhotos/${packageInfo.version}`,
         },
         validateStatus: () => true,
         maxRedirects: 0,

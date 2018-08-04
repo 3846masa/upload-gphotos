@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/3846masa/upload-gphotos/issues"
   },
-  "version": "2.0.8",
+  "version": "2.0.9",
   "main": "lib/index.js",
   "bin": {
     "upload-gphotos": "lib/cli.js"

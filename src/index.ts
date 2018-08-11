@@ -161,6 +161,33 @@ class GPhotos {
   }
 
   /** @private */
+  async postLoginLegacy() {
+    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin');
+
+    const loginData = Object.assign(
+      qs.parse(
+        cheerio
+          .load(loginHTML)('form')
+          .serialize()
+      ),
+      {
+        Email: this.username,
+        Passwd: this.password,
+      }
+    );
+
+    const loginRes = await this.axios.post(
+      'https://accounts.google.com/signin/challenge/sl/password',
+      qs.stringify(loginData)
+    );
+
+    if (loginRes.status !== 302) {
+      return Promise.reject(new Error('Failed to login'));
+    }
+    return;
+  }
+
+  /** @private */
   async postLogin() {
     const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin', {
       params: {
@@ -209,7 +236,8 @@ class GPhotos {
     );
 
     if (loginRes.status !== 302) {
-      return Promise.reject(new Error('Failed to login'));
+      // Fallback
+      return this.postLoginLegacy();
     }
     return;
   }

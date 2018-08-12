@@ -123,6 +123,22 @@ class GPhotos {
   }
 
   /** @private */
+  async sendBatchExecute(queries: Record<string, any>) {
+    const postArray = [];
+    for (const key of Object.keys(queries)) {
+      postArray.push([key, JSON.stringify(queries[key]), null, null]);
+    }
+    const data = await this.sendQuery('https://photos.google.com/_/PhotosUi/data/batchexecute', [postArray]);
+    return JSON.parse(data.substr(4))
+      .filter((entry: any[]) => entry[0] === 'wrb.fr')
+      .reduce((obj: any, entry: any[]) => {
+        const key = entry[1];
+        obj[key] = JSON.parse(entry[2]);
+        return obj;
+      }, {});
+  }
+
+  /** @private */
   async sendQuery(url: string, query: any) {
     const queryRes = await this.axios.post(
       url,

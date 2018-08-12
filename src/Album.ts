@@ -45,8 +45,9 @@ export default class GPhotosAlbum {
   }
 
   async fetchPhotoList(next?: string) {
-    const query = [this.id, next || null, null, null, 0];
-    const results = await this.gphotos.sendDataQuery(71837398, query);
+    const { snAcKc: results } = await this.gphotos.sendBatchExecute({
+      snAcKc: [this.id, next || null, null, null, 0],
+    });
 
     const photoList = (results[1] as any[]).map(info => {
       const data = Object.assign(Photo.parseInfo(info), { gphotos: this.gphotos });

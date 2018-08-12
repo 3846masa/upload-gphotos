@@ -343,15 +343,16 @@ class GPhotos {
 
   async createAlbum(albumName: string) {
     const latestPhoto = await this.fetchLatestPhoto();
-    const query = [[latestPhoto.id], null, albumName.toString()];
+    const { OXvT9d: results } = await this.sendBatchExecute({
+      OXvT9d: [albumName.toString(), null, 1, [[[latestPhoto.id]]]],
+    });
 
-    const results = await this.sendMutateQuery(79956622, query);
-
-    const [albumId, [insertedPhotoId]] = results;
-
-    await new Photo({ id: insertedPhotoId, gphotos: this }).removeFromAlbum();
-
+    const [[albumId]] = results;
     const album = await this.searchAlbum(albumId);
+
+    const insertedPhoto = (await album.fetchPhotoList()).list[0];
+    await insertedPhoto.removeFromAlbum();
+
     return album;
   }
 

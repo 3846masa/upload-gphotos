@@ -374,8 +374,9 @@ class GPhotos {
   }
 
   async fetchPhotoList(next?: string) {
-    const query = [next || null, null, null, null, 1];
-    const results = await this.sendDataQuery(74806772, query);
+    const { lcxiM: results } = await this.sendBatchExecute({
+      lcxiM: [next || null, null, null, null, 1],
+    });
 
     if (!results[0]) {
       return { list: [], next: undefined };

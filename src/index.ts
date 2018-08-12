@@ -316,8 +316,9 @@ class GPhotos {
   }
 
   async fetchAlbumList(next?: string): Promise<{ list: Album[]; next?: string }> {
-    const query = [next || null, null, null, null, 1];
-    const results = await this.sendDataQuery(72930366, query);
+    const { Z5xsfc: results } = await this.sendBatchExecute({
+      Z5xsfc: [next || null, null, null, null, 1],
+    });
 
     if (!results[0]) {
       return { list: [], next: undefined };

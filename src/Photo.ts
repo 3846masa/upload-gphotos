@@ -37,7 +37,11 @@ export default class GPhotosPhoto {
     const type =
       !data[lastIdx] || typeof data[lastIdx] !== 'object'
         ? 'photo'
-        : '76647426' in data[lastIdx] ? 'video' : '139842850' in data[lastIdx] ? 'animation_gif' : 'photo';
+        : '76647426' in data[lastIdx]
+          ? 'video'
+          : '139842850' in data[lastIdx]
+            ? 'animation_gif'
+            : 'photo';
 
     return {
       id: data[0],
@@ -52,32 +56,32 @@ export default class GPhotosPhoto {
   }
 
   async removeFromAlbum() {
-    const query = [[this.id], []];
-    await this.gphotos.sendMutateQuery(85381832, query, true);
+    await this.gphotos.sendBatchExecute({
+      ycV3Nd: [[this.id], []],
+    });
     return true;
   }
 
   async remove() {
-    const query = [[], 1, [this.id], 4, null, []];
-    await this.gphotos.sendMutateQuery(73931313, query, true);
+    await this.gphotos.sendBatchExecute({
+      XwAOJf: [[], 1, [this.id], 3, null, [], []],
+    });
     return true;
   }
 
   async fetchInfo() {
     const queries: Record<string, any[]> = {
-      '73756775': [this.id, 1],
-      '74881883': [this.id, null, null, true],
+      fDcn4b: [this.id, 1],
+      VrseUb: [this.id, null, null, true],
     };
 
-    const results = await Promise.all(
-      Object.keys(queries).map(key => this.gphotos.sendDataQuery(parseInt(key, 10), queries[key]))
-    );
+    const results = await this.gphotos.sendBatchExecute(queries);
 
-    this.description = results[0][0][1];
-    this.title = results[0][0][2];
-    this.fileSize = results[0][0][5];
+    this.description = results['fDcn4b'][0][1];
+    this.title = results['fDcn4b'][0][2];
+    this.fileSize = results['fDcn4b'][0][5];
 
-    const info = GPhotosPhoto.parseInfo(results[1][0]);
+    const info = GPhotosPhoto.parseInfo(results['VrseUb'][0]);
     Object.assign(this, info);
 
     return this;
@@ -85,15 +89,17 @@ export default class GPhotosPhoto {
 
   async modifyCreatedDate(createdDate: Date, timezoneSec?: number) {
     const diffTime = Math.round((new Date(createdDate).getTime() - this.createdAt.getTime()) / 1000);
-    const query = [[[this.id, null, timezoneSec || null, diffTime]]];
-    await this.gphotos.sendMutateQuery(115094896, query, true);
+    await this.gphotos.sendBatchExecute({
+      DaSgWe: [[[this.id, null, timezoneSec || null, diffTime]]],
+    });
     await this.fetchInfo();
     return true;
   }
 
   async modifyDescription(description: string) {
-    const query = [null, description, this.id];
-    await this.gphotos.sendMutateQuery(74747338, query, true);
+    await this.gphotos.sendBatchExecute({
+      AQNOFd: [null, description, this.id],
+    });
     await this.fetchInfo();
     return true;
   }

@@ -26,21 +26,28 @@ export default class GPhotosAlbum {
   }
 
   async addPhotos(photos: Photo[]) {
-    const query = [photos.map(p => p.id), this.id];
-
-    const results = await this.gphotos.sendMutateQuery(79956622, query).catch(() => {
-      // Fallback: If album is shared, use 99484733.
-      const query = [[this.id], [2, null, [[photos.map(p => p.id)]], null, null, [], []]];
-      return this.gphotos.sendMutateQuery(99484733, query);
-    });
+    const results = await this.gphotos
+      .sendBatchExecute({
+        E1Cajb: [photos.map(p => p.id), this.id],
+      })
+      .then(res => res['E1Cajb'])
+      .catch(() => {
+        // Fallback: If album is shared, use 99484733.
+        return this.gphotos
+          .sendBatchExecute({
+            C2V01c: [[this.id], [2, null, [[photos.map(p => p.id)]], null, null, [], [1], null, null, null, []]],
+          })
+          .then(res => res['C2V01c']);
+      });
 
     const insertedPhotoIds = results[1] || [];
     return insertedPhotoIds as string;
   }
 
   async fetchPhotoList(next?: string) {
-    const query = [this.id, next || null, null, null, 0];
-    const results = await this.gphotos.sendDataQuery(71837398, query);
+    const { snAcKc: results } = await this.gphotos.sendBatchExecute({
+      snAcKc: [this.id, next || null, null, null, 0],
+    });
 
     const photoList = (results[1] as any[]).map(info => {
       const data = Object.assign(Photo.parseInfo(info), { gphotos: this.gphotos });
@@ -64,8 +71,9 @@ export default class GPhotosAlbum {
   }
 
   async remove() {
-    const query = [[this.id], []];
-    await this.gphotos.sendMutateQuery(85534195, query, true);
+    await this.gphotos.sendBatchExecute({
+      nV6Qv: [[this.id], []],
+    });
     return true;
   }
 }

@@ -72,54 +72,24 @@ class GPhotos {
   }
 
   /** @private */
-  async sendDataQuery(queryNum: number, query: any) {
-    const reqQuery = [
-      [
-        [
-          queryNum,
-          [
-            {
-              [String(queryNum)]: query,
-            },
-          ],
-          null,
-          null,
-          0,
-        ],
-      ],
-    ];
+  async sendBatchExecute(queries: Record<string, any>) {
+    const postArray = [];
+    for (const key of Object.keys(queries)) {
+      postArray.push([key, JSON.stringify(queries[key]), null, null]);
+    }
+    const data = await this.sendQuery('https://photos.google.com/_/PhotosUi/data/batchexecute', [postArray]);
+    const results: any[] = JSON.parse(data.substr(4)).filter((entry: any[]) => entry[0] === 'wrb.fr');
 
-    const url = 'https://photos.google.com/_/PhotosUi/data';
-    const body = await this.sendQuery(url, reqQuery);
+    const error = results.find((entry: any[]) => Array.isArray(entry[entry.length - 2]));
+    if (error) {
+      throw new Error(`Error batchexecute (error: ${error[error.length - 2][0]}, query: ${error[1]})`);
+    }
 
-    const results = JSON.parse(body.substr(4))[0][2][String(queryNum)];
-    return results;
-  }
-
-  /** @private */
-  async sendMutateQuery(queryNum: number, query: any, ignoreResult = false) {
-    const reqQuery = [
-      'af.maf',
-      [
-        [
-          'af.add',
-          queryNum,
-          [
-            {
-              [String(queryNum)]: query,
-            },
-          ],
-        ],
-      ],
-    ];
-
-    const url = 'https://photos.google.com/_/PhotosUi/mutate';
-    const body = await this.sendQuery(url, reqQuery);
-
-    if (ignoreResult) return true;
-
-    const results = JSON.parse(body.substr(4))[0][1][String(queryNum)];
-    return results;
+    return results.reduce((obj: any, entry: any[]) => {
+      const key = entry[1];
+      obj[key] = JSON.parse(entry[2]);
+      return obj;
+    }, {});
   }
 
   /** @private */
@@ -295,8 +265,9 @@ class GPhotos {
   }
 
   async fetchAlbumList(next?: string): Promise<{ list: Album[]; next?: string }> {
-    const query = [next || null, null, null, null, 1];
-    const results = await this.sendDataQuery(72930366, query);
+    const { Z5xsfc: results } = await this.sendBatchExecute({
+      Z5xsfc: [next || null, null, null, null, 1],
+    });
 
     if (!results[0]) {
       return { list: [], next: undefined };
@@ -321,15 +292,16 @@ class GPhotos {
 
   async createAlbum(albumName: string) {
     const latestPhoto = await this.fetchLatestPhoto();
-    const query = [[latestPhoto.id], null, albumName.toString()];
+    const { OXvT9d: results } = await this.sendBatchExecute({
+      OXvT9d: [albumName.toString(), null, 1, [[[latestPhoto.id]]]],
+    });
 
-    const results = await this.sendMutateQuery(79956622, query);
-
-    const [albumId, [insertedPhotoId]] = results;
-
-    await new Photo({ id: insertedPhotoId, gphotos: this }).removeFromAlbum();
-
+    const [[albumId]] = results;
     const album = await this.searchAlbum(albumId);
+
+    const insertedPhoto = (await album.fetchPhotoList()).list[0];
+    await insertedPhoto.removeFromAlbum();
+
     return album;
   }
 
@@ -352,8 +324,9 @@ class GPhotos {
   }
 
   async fetchPhotoList(next?: string) {
-    const query = [next || null, null, null, null, 1];
-    const results = await this.sendDataQuery(74806772, query);
+    const { lcxiM: results } = await this.sendBatchExecute({
+      lcxiM: [next || null, null, null, null, 1],
+    });
 
     if (!results[0]) {
       return { list: [], next: undefined };

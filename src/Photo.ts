@@ -97,8 +97,9 @@ export default class GPhotosPhoto {
   }
 
   async modifyDescription(description: string) {
-    const query = [null, description, this.id];
-    await this.gphotos.sendMutateQuery(74747338, query, true);
+    await this.gphotos.sendBatchExecute({
+      AQNOFd: [null, description, this.id],
+    });
     await this.fetchInfo();
     return true;
   }

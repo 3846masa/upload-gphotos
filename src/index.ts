@@ -72,32 +72,6 @@ class GPhotos {
   }
 
   /** @private */
-  async sendMutateQuery(queryNum: number, query: any, ignoreResult = false) {
-    const reqQuery = [
-      'af.maf',
-      [
-        [
-          'af.add',
-          queryNum,
-          [
-            {
-              [String(queryNum)]: query,
-            },
-          ],
-        ],
-      ],
-    ];
-
-    const url = 'https://photos.google.com/_/PhotosUi/mutate';
-    const body = await this.sendQuery(url, reqQuery);
-
-    if (ignoreResult) return true;
-
-    const results = JSON.parse(body.substr(4))[0][1][String(queryNum)];
-    return results;
-  }
-
-  /** @private */
   async sendBatchExecute(queries: Record<string, any>) {
     const postArray = [];
     for (const key of Object.keys(queries)) {

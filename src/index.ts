@@ -72,31 +72,6 @@ class GPhotos {
   }
 
   /** @private */
-  async sendDataQuery(queryNum: number, query: any) {
-    const reqQuery = [
-      [
-        [
-          queryNum,
-          [
-            {
-              [String(queryNum)]: query,
-            },
-          ],
-          null,
-          null,
-          0,
-        ],
-      ],
-    ];
-
-    const url = 'https://photos.google.com/_/PhotosUi/data';
-    const body = await this.sendQuery(url, reqQuery);
-
-    const results = JSON.parse(body.substr(4))[0][2][String(queryNum)];
-    return results;
-  }
-
-  /** @private */
   async sendMutateQuery(queryNum: number, query: any, ignoreResult = false) {
     const reqQuery = [
       'af.maf',

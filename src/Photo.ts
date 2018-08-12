@@ -56,8 +56,9 @@ export default class GPhotosPhoto {
   }
 
   async removeFromAlbum() {
-    const query = [[this.id], []];
-    await this.gphotos.sendMutateQuery(85381832, query, true);
+    await this.gphotos.sendBatchExecute({
+      ycV3Nd: [[this.id], []],
+    });
     return true;
   }
 

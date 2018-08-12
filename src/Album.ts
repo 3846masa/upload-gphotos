@@ -26,13 +26,16 @@ export default class GPhotosAlbum {
   }
 
   async addPhotos(photos: Photo[]) {
-    const query = [photos.map(p => p.id), this.id];
-
-    const results = await this.gphotos.sendMutateQuery(79956622, query).catch(() => {
-      // Fallback: If album is shared, use 99484733.
-      const query = [[this.id], [2, null, [[photos.map(p => p.id)]], null, null, [], []]];
-      return this.gphotos.sendMutateQuery(99484733, query);
-    });
+    const results = await this.gphotos
+      .sendBatchExecute({
+        E1Cajb: [photos.map(p => p.id), this.id],
+      })
+      .catch(() => {
+        // Fallback: If album is shared, use 99484733.
+        return this.gphotos.sendBatchExecute({
+          C2V01c: [[this.id], [2, null, [[photos.map(p => p.id)]], null, null, [], [1], null, null, null, []]],
+        });
+      });
 
     const insertedPhotoIds = results[1] || [];
     return insertedPhotoIds as string;

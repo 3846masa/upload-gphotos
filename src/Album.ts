@@ -30,11 +30,14 @@ export default class GPhotosAlbum {
       .sendBatchExecute({
         E1Cajb: [photos.map(p => p.id), this.id],
       })
+      .then(res => res['E1Cajb'])
       .catch(() => {
         // Fallback: If album is shared, use 99484733.
-        return this.gphotos.sendBatchExecute({
-          C2V01c: [[this.id], [2, null, [[photos.map(p => p.id)]], null, null, [], [1], null, null, null, []]],
-        });
+        return this.gphotos
+          .sendBatchExecute({
+            C2V01c: [[this.id], [2, null, [[photos.map(p => p.id)]], null, null, [], [1], null, null, null, []]],
+          })
+          .then(res => res['C2V01c']);
       });
 
     const insertedPhotoIds = results[1] || [];

@@ -129,13 +129,18 @@ class GPhotos {
       postArray.push([key, JSON.stringify(queries[key]), null, null]);
     }
     const data = await this.sendQuery('https://photos.google.com/_/PhotosUi/data/batchexecute', [postArray]);
-    return JSON.parse(data.substr(4))
-      .filter((entry: any[]) => entry[0] === 'wrb.fr')
-      .reduce((obj: any, entry: any[]) => {
-        const key = entry[1];
-        obj[key] = JSON.parse(entry[2]);
-        return obj;
-      }, {});
+    const results: any[] = JSON.parse(data.substr(4)).filter((entry: any[]) => entry[0] === 'wrb.fr');
+
+    const error = results.find((entry: any[]) => Array.isArray(entry[entry.length - 2]));
+    if (error) {
+      throw new Error(`Error batchexecute (error: ${error[error.length - 2][0]}, query: ${error[1]})`);
+    }
+
+    return results.reduce((obj: any, entry: any[]) => {
+      const key = entry[1];
+      obj[key] = JSON.parse(entry[2]);
+      return obj;
+    }, {});
   }
 
   /** @private */

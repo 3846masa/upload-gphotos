@@ -89,8 +89,9 @@ export default class GPhotosPhoto {
 
   async modifyCreatedDate(createdDate: Date, timezoneSec?: number) {
     const diffTime = Math.round((new Date(createdDate).getTime() - this.createdAt.getTime()) / 1000);
-    const query = [[[this.id, null, timezoneSec || null, diffTime]]];
-    await this.gphotos.sendMutateQuery(115094896, query, true);
+    await this.gphotos.sendBatchExecute({
+      DaSgWe: [[[this.id, null, timezoneSec || null, diffTime]]],
+    });
     await this.fetchInfo();
     return true;
   }

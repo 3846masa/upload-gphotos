@@ -30,7 +30,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@3846masa/axios-cookiejar-support": "^0.3.1",
+    "@3846masa/axios-cookiejar-support": "^0.4.0",
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "colors": "^1.1.2",

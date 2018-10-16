@@ -132,7 +132,11 @@ class GPhotos {
 
   /** @private */
   async postLoginLegacy() {
-    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin');
+    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin', {
+      params: {
+        nojavascript: 1,
+      },
+    });
 
     const loginData = Object.assign(
       qs.parse(

@@ -11,6 +11,8 @@ Google Photos にファイルをアップロード．
 
 Upload photos to Google Photos (Unofficial).
 
+**CAUTION** | This library don't use Official Google Photos API. **USE AT YOUR OWN RISK**
+
 ## Preparation
 
 **USE AT YOUR OWN RISK**
@@ -63,6 +65,8 @@ See [Documentation].
 
 ## FAQ
 
+- **Q.** Why not using Google Photos API?
+    - **A.** It cannot upload with "High quality" option. See [issues#304(comments)].
 - **Q.** Is it support to login with SMS / 2FA / Application password?
     - **A.** No. I have no plan to support. See [issues#196].
 - **Q.** I can't login, Why?
@@ -78,3 +82,4 @@ See [Documentation].
 [issues#196]: https://github.com/3846masa/upload-gphotos/issues/196
 [issues#246]: https://github.com/3846masa/upload-gphotos/issues/246
 [issues#256(comments)]: https://github.com/3846masa/upload-gphotos/issues/256#issuecomment-356458407
+[issues#304(comments)]: https://github.com/3846masa/upload-gphotos/issues/304#issuecomment-433676584

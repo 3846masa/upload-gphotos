@@ -43,7 +43,7 @@
     "log4js": "^3.0.0",
     "progress": "^2.0.0",
     "static-eval": "^2.0.0",
-    "tough-cookie": "^2.3.3",
+    "tough-cookie": "^3.0.0",
     "yargs": "^12.0.1"
   },
   "devDependencies": {

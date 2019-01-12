@@ -151,19 +151,18 @@ class GPhotos {
     const page = await context.newPage();
     await page.setUserAgent(USER_AGENT);
 
-    await page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' });
-
-    const elementEmail = await page.$('input[type="email"]');
-    await elementEmail!.type(this.username!);
-    await elementEmail!.press('Enter');
-
     await Promise.all([
-      page.waitForSelector('input[name="password"]', { visible: true }),
+      page.waitForSelector('input[type="email"]', { visible: true }),
+      page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' }),
     ]);
 
-    const elementPassword = await page.$('input[name="password"]');
-    await elementPassword!.type(this.password!);
-    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), elementPassword!.press('Enter')]);
+    const $email = (await page.$('input[type="email"]'))!;
+    await $email.type(this.username!);
+    await Promise.all([page.waitForSelector('input[type="password"]', { visible: true }), $email.press('Enter')]);
+
+    const $password = (await page.$('input[type="password"]'))!;
+    await $password.type(this.password!);
+    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), $password.press('Enter')]);
 
     const cookies = await page.cookies();
     for (const cookie of cookies) {

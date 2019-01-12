@@ -13,16 +13,22 @@ Upload photos to Google Photos (Unofficial).
 
 **CAUTION** | This library don't use Official Google Photos API. **USE AT YOUR OWN RISK**
 
+## Requirement
+
+- Chrome or Chromium
+  - upload-gphotos login via Chrome or Chromium
+  - If you installed Chrome to custom path, set `PUPPETEER_EXECUTABLE_PATH`
+
 ## Preparation
 
 **USE AT YOUR OWN RISK**
 
 1. Turn on "Allowing less secure apps to access your account"
-    - https://support.google.com/accounts/answer/6010255
+   - https://support.google.com/accounts/answer/6010255
 2. (Optional) Login Google via browser if you haven't login from current IP address.
-    - I recommend to login via VNC using [fcwu/docker-ubuntu-vnc-desktop].
-    - Other way: using [apenwarr/sshuttle]
-        - FYI: [issues#113(comments)]
+   - I recommend to login via VNC using [fcwu/docker-ubuntu-vnc-desktop].
+   - Other way: using [apenwarr/sshuttle]
+     - FYI: [issues#113(comments)]
 
 [fcwu/docker-ubuntu-vnc-desktop]: https://github.com/fcwu/docker-ubuntu-vnc-desktop
 [apenwarr/sshuttle]: https://github.com/apenwarr/sshuttle
@@ -31,21 +37,25 @@ Upload photos to Google Photos (Unofficial).
 ## Installation
 
 ### npm (Recommended)
+
 ```
 $ npm install -g upload-gphotos
 ```
 
 ### Executable file
+
 Download your platform's binary via [GitHub Releases].
 
-[GitHub Releases]: https://github.com/3846masa/upload-gphotos/releases
+[github releases]: https://github.com/3846masa/upload-gphotos/releases
 
 ## Usage
+
 ```
 $ upload-gphotos [<file>...] [--quiet] [-r <retry>] [-u <username>] [-p <password>] [-a <albumname>]
 ```
 
 ## Library
+
 This is also Node.js library.
 
 ```js
@@ -61,23 +71,23 @@ This is also Node.js library.
 
 See [Documentation].
 
-[Documentation]: https://3846masa.github.io/upload-gphotos/modules/_index_.html
+[documentation]: https://3846masa.github.io/upload-gphotos/modules/_index_.html
 
 ## FAQ
 
 - **Q.** Why not using Google Photos API?
-    - **A.** It cannot upload with "High quality" option. See [issues#304(comments)].
+  - **A.** It cannot upload with "High quality" option. See [issues#304(comments)].
 - **Q.** Is it support to login with SMS / 2FA / Application password?
-    - **A.** No. I have no plan to support. See [issues#196].
+  - **A.** No. I have no plan to support. See [issues#196].
 - **Q.** I can't login, Why?
-    - **A.** Please try to login via browser, first.
-    - Google will ban to login from unknown IP.
+  - **A.** Please try to login via browser, first.
+  - Google will ban to login from unknown IP.
 - **Q.** When uploading large / many files, Uploading was failed.
-    - **A.** It maybe limitations of Google Photos.
-    - Limitations is below. (FYI: [issues#246], [issues#256(comments)])
-        - 75 MB or 100 megapixels / 1 photo
-        - 10 GB / 1 video
-        - Total bandwidth maybe 10 GB / 1 day
+  - **A.** It maybe limitations of Google Photos.
+  - Limitations is below. (FYI: [issues#246], [issues#256(comments)])
+    - 75 MB or 100 megapixels / 1 photo
+    - 10 GB / 1 video
+    - Total bandwidth maybe 10 GB / 1 day
 
 [issues#196]: https://github.com/3846masa/upload-gphotos/issues/196
 [issues#246]: https://github.com/3846masa/upload-gphotos/issues/246

@@ -163,7 +163,6 @@ class GPhotos {
 
     const elementPassword = await page.$('input[name="password"]');
     await elementPassword.type(this.password);
-    await elementPassword.press('Enter');
     await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), elementPassword.press('Enter')]);
 
     const cookies = await page.cookies();

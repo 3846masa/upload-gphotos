@@ -153,14 +153,18 @@ class GPhotos {
 
     await page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' });
 
-    await page.type('input[type="email"]', this.username!);
+    const elementEmail = await page.$('input[type="email"]');
+    await elementEmail.type(this.username);
+    await elementEmail.press('Enter');
+
     await Promise.all([
       page.waitForSelector('input[name="password"]', { visible: true }),
-      page.click('#identifierNext'),
     ]);
 
-    await page.type('input[name="password"]', this.password!);
-    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), page.click('#passwordNext')]);
+    const elementPassword = await page.$('input[name="password"]');
+    await elementPassword.type(this.password);
+    await elementPassword.press('Enter');
+    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), elementPassword.press('Enter')]);
 
     const cookies = await page.cookies();
     for (const cookie of cookies) {

@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:6
+      - image: circleci/node:8
     steps:
       - checkout
       - restore_cache:
@@ -28,7 +28,7 @@ jobs:
           key: v1-build-{{ .Environment.CIRCLE_SHA1 }}
   deploy-npm:
     docker:
-      - image: circleci/node:6
+      - image: circleci/node:8
     steps:
       - checkout
       - restore_cache:
@@ -39,7 +39,7 @@ jobs:
             npm publish
   deploy-doc:
     docker:
-      - image: circleci/node:6
+      - image: circleci/node:8
     steps:
       - checkout
       - restore_cache:

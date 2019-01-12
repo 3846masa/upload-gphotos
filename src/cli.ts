@@ -15,14 +15,13 @@ import wait from './util/wait';
 
 const packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 
-interface CLIOptions extends Arguments {
+interface CLIOptions {
   username: string;
   password: string;
   retry: number;
   album: string[];
   quiet: boolean;
   version: boolean;
-  _: string[];
 }
 
 function decodeCookie(encoded: string, password: string) {
@@ -62,7 +61,11 @@ const logger = log4js.getLogger();
 
 yargs.demand(1);
 yargs.usage(
-  `Upload-GPhotos ${packageInfo.version}\n\nUsage: upload-gphotos file [...] [--quiet] [-r retry] [-u username] [-p password] [-a albumname]`
+  `
+Upload-GPhotos ${packageInfo.version}
+
+Usage: upload-gphotos file [...] [--quiet] [-r retry] [-u username] [-p password] [-a albumname]
+  `.trim()
 );
 yargs.options('r', {
   alias: 'retry',
@@ -100,7 +103,7 @@ const {
   album: albumNameList,
   version: showVersion,
   _: files,
-} = yargs.argv as CLIOptions;
+} = yargs.argv as Arguments<CLIOptions>;
 
 if (showVersion) {
   console.log(packageInfo.version);
@@ -109,7 +112,7 @@ if (showVersion) {
 
 (async () => {
   try {
-    await Promise.all(files.map(path => fs.access(path)));
+    await Promise.all(files.map((path) => fs.access(path)));
   } catch (_) {
     yargs.showHelp();
     process.abort();
@@ -146,7 +149,7 @@ if (showVersion) {
       jar,
     },
   });
-  await gphotos.login().catch(err => {
+  await gphotos.login().catch((err) => {
     logger.error(`Failed to login. ${err.message}`);
     console.error(jar.serializeSync());
     return Promise.reject(err);
@@ -162,7 +165,7 @@ if (showVersion) {
     // Try 3 times
     let uploadPromise: Promise<GPhotosPhoto> = Promise.reject(null);
     for (let cnt = 0; cnt < retry; cnt++) {
-      uploadPromise = uploadPromise.catch(async err => {
+      uploadPromise = uploadPromise.catch(async (err) => {
         if (err) {
           logger.error(`Failed to upload. Retry after 3 sec. ${err.message}`);
         }
@@ -171,14 +174,14 @@ if (showVersion) {
       });
     }
 
-    const photo = await uploadPromise.catch(err => {
+    const photo = await uploadPromise.catch((err) => {
       logger.error(`Failed to upload. ${err.message}`);
       return Promise.reject(err);
     });
 
     if (albumNameList && albumList.length !== albumNameList.length) {
       for (let albumName of albumNameList) {
-        const album = await gphotos.searchOrCreateAlbum(albumName).catch(err => {
+        const album = await gphotos.searchOrCreateAlbum(albumName).catch((err) => {
           logger.error(`Failed to create album. ${err.message}`);
           return Promise.reject(err);
         });
@@ -187,7 +190,7 @@ if (showVersion) {
     }
 
     for (let album of albumList) {
-      await album.addPhoto(photo).catch(err => {
+      await album.addPhoto(photo).catch((err) => {
         logger.error(`Failed to add photo to album. ${err.message}`);
         return Promise.reject(err);
       });

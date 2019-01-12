@@ -11,9 +11,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: yarn install
       - save_cache:
           paths:
@@ -50,6 +50,7 @@ jobs:
           command: |
             git config --global user.email 3846masaihro+git@gmail.com
             git config --global user.name 3846masa
+            git config credential.helper '!f() { echo "username=${CIRCLE_USERNAME}\npassword=${GITHUB_TOKEN}"; }; f'
             touch doc/.nojekyll
             npm run release:doc
   deploy-release:

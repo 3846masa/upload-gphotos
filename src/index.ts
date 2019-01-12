@@ -1,10 +1,12 @@
 import * as fs from 'fs-extra';
 import * as libpath from 'path';
 import * as qs from 'querystring';
-import * as cheerio from 'cheerio';
 import * as tough from 'tough-cookie';
 import * as ProgressBar from 'progress';
 import * as colors from 'colors';
+import * as puppeteer from 'puppeteer-core';
+import { getPlatform } from 'chrome-launcher/dist/utils';
+import * as chromeFinder from 'chrome-launcher/dist/chrome-finder';
 import Axios, { AxiosInstance } from 'axios';
 import cookieJarSupport from '@3846masa/axios-cookiejar-support';
 
@@ -13,7 +15,8 @@ import extractTokensFromDOM from './util/extractTokensFromDOM';
 import Album from './Album';
 import Photo from './Photo';
 
-const packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
+const USER_AGENT =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36';
 
 export interface GPhotosConstructorParams {
   username?: string;
@@ -59,14 +62,14 @@ class GPhotos {
     this.axios = cookieJarSupport(
       Axios.create({
         headers: {
-          'User-Agent': `Mozilla/5.0 UploadGPhotos/${packageInfo.version}`,
+          'User-Agent': USER_AGENT,
         },
         validateStatus: () => true,
         maxRedirects: 0,
         jar: this.options.jar,
         withCredentials: true,
         responseType: 'text',
-        transformResponse: [data => data],
+        transformResponse: [(data) => data],
       })
     );
   }
@@ -131,89 +134,57 @@ class GPhotos {
   }
 
   /** @private */
-  async postLoginLegacy() {
-    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin', {
-      params: {
-        nojavascript: 1,
-      },
-    });
-
-    const loginData = Object.assign(
-      qs.parse(
-        cheerio
-          .load(loginHTML)('form')
-          .serialize()
-      ),
-      {
-        Email: this.username,
-        Passwd: this.password,
-      }
-    );
-
-    const loginRes = await this.axios.post(
-      'https://accounts.google.com/signin/challenge/sl/password',
-      qs.stringify(loginData)
-    );
-
-    if (loginRes.status !== 302) {
-      return Promise.reject(new Error('Failed to login'));
-    }
-    return;
-  }
-
-  /** @private */
   async postLogin() {
-    const { data: loginHTML } = await this.axios.get('https://accounts.google.com/ServiceLogin', {
-      params: {
-        continue: 'https://accounts.google.com/ManageAccount',
-        rip: 1,
-        nojavascript: 1,
-      },
-    });
-
-    const { data: lookupHTML } = await this.axios.post(
-      'https://accounts.google.com/signin/v1/lookup',
-      qs.stringify({
-        ...qs.parse(
-          cheerio
-            .load(loginHTML)('form')
-            .serialize()
-        ),
-        Email: this.username,
-        Passwd: '',
-        signIn: 'Next',
-      }),
-      {
-        headers: {
-          Referer: 'https://accounts.google.com/ServiceLogin',
-        },
-      }
-    );
-
-    const loginRes = await this.axios.post(
-      'https://accounts.google.com/signin/challenge/sl/password',
-      qs.stringify({
-        ...qs.parse(
-          cheerio
-            .load(lookupHTML)('form')
-            .serialize()
-        ),
-        Email: this.username,
-        Passwd: this.password,
-        signIn: 'Sign in',
-      }),
-      {
-        headers: {
-          Referer: 'https://accounts.google.com/signin/v1/lookup',
-        },
-      }
-    );
-
-    if (loginRes.status !== 302) {
-      // Fallback
-      return this.postLoginLegacy();
+    const chromePathList = [
+      process.env.PUPPETEER_EXECUTABLE_PATH,
+      ...(await (chromeFinder as any)[getPlatform()]()),
+    ].filter((p) => !!p);
+    if (chromePathList.length === 0) {
+      throw new Error('Chrome / Chromium is not installed.');
     }
-    return;
+
+    const browser = await puppeteer.launch({
+      executablePath: chromePathList[0],
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
+    await page.setUserAgent(USER_AGENT);
+
+    await page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' });
+
+    await page.type('input[type="email"]', this.username!);
+    await Promise.all([
+      page.waitForSelector('input[name="password"]', { visible: true }),
+      page.click('#identifierNext'),
+    ]);
+
+    await page.type('input[name="password"]', this.password!);
+    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), page.click('#passwordNext')]);
+
+    const cookies = await page.cookies();
+    for (const cookie of cookies) {
+      await new Promise((resolve, reject) => {
+        this.options.jar.setCookie(
+          new tough.Cookie({
+            key: cookie.name,
+            value: cookie.value,
+            expires: new Date(cookie.expires * 1000),
+            domain: cookie.domain.replace(/^\./, ''),
+            path: cookie.path,
+          }),
+          page.url(),
+          {
+            http: cookie.httpOnly,
+            secure: cookie.secure,
+            ignoreError: true,
+          },
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+    }
+
+    await browser.close();
   }
 
   /** @private */
@@ -277,7 +248,7 @@ class GPhotos {
       return { list: [], next: undefined };
     }
 
-    const albumList = (results[0] as any[]).map(al => {
+    const albumList = (results[0] as any[]).map((al) => {
       const info = al.pop()['72930366'];
       return new Album({
         id: al.shift(),
@@ -336,7 +307,7 @@ class GPhotos {
       return { list: [], next: undefined };
     }
 
-    const photoList = (results[0] as any[]).map(info => {
+    const photoList = (results[0] as any[]).map((info) => {
       const data = Object.assign(Photo.parseInfo(info), { gphotos: this });
       return new Photo(data);
     });
@@ -401,7 +372,7 @@ class GPhotos {
         total: size,
       });
       stream.on('open', () => process.stderr.write('\n'));
-      stream.on('data', chunk => {
+      stream.on('data', (chunk) => {
         progressBar.tick(chunk.length);
       });
       stream.on('end', () => process.stderr.write('\n'));

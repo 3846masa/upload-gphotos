@@ -135,58 +135,58 @@ class GPhotos {
 
   /** @private */
   async postLogin() {
-    const chromePathList = [
-      process.env.PUPPETEER_EXECUTABLE_PATH,
-      ...(await (chromeFinder as any)[getPlatform()]()),
-    ].filter((p) => !!p);
-    if (chromePathList.length === 0) {
+    const chromePath = process.env.PUPPETEER_EXECUTABLE_PATH || (await (chromeFinder as any)[getPlatform()]())[0];
+    if (!chromePath) {
       throw new Error('Chrome / Chromium is not installed.');
     }
 
     const browser = await puppeteer.launch({
-      executablePath: chromePathList[0],
+      executablePath: chromePath,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
-    const context = await browser.createIncognitoBrowserContext();
-    const page = await context.newPage();
-    await page.setUserAgent(USER_AGENT);
 
-    await Promise.all([
-      page.waitForSelector('input[type="email"]', { visible: true }),
-      page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' }),
-    ]);
+    try {
+      const context = await browser.createIncognitoBrowserContext();
+      const page = await context.newPage();
+      await page.setUserAgent(USER_AGENT);
 
-    const $email = (await page.$('input[type="email"]'))!;
-    await $email.type(this.username!);
-    await Promise.all([page.waitForSelector('input[type="password"]', { visible: true }), $email.press('Enter')]);
+      await Promise.all([
+        page.waitForSelector('input[type="email"]', { visible: true }),
+        page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' }),
+      ]);
 
-    const $password = (await page.$('input[type="password"]'))!;
-    await $password.type(this.password!);
-    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), $password.press('Enter')]);
+      const $email = (await page.$('input[type="email"]'))!;
+      await $email.type(this.username!);
+      await Promise.all([page.waitForSelector('input[type="password"]', { visible: true }), $email.press('Enter')]);
 
-    const cookies = await page.cookies();
-    for (const cookie of cookies) {
-      await new Promise((resolve, reject) => {
-        this.options.jar.setCookie(
-          new tough.Cookie({
-            key: cookie.name,
-            value: cookie.value,
-            expires: new Date(cookie.expires * 1000),
-            domain: cookie.domain.replace(/^\./, ''),
-            path: cookie.path,
-          }),
-          page.url(),
-          {
-            http: cookie.httpOnly,
-            secure: cookie.secure,
-            ignoreError: true,
-          },
-          (err) => (err ? reject(err) : resolve())
-        );
-      });
+      const $password = (await page.$('input[type="password"]'))!;
+      await $password.type(this.password!);
+      await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), $password.press('Enter')]);
+
+      const cookies = await page.cookies();
+      for (const cookie of cookies) {
+        await new Promise((resolve, reject) => {
+          this.options.jar.setCookie(
+            new tough.Cookie({
+              key: cookie.name,
+              value: cookie.value,
+              expires: new Date(cookie.expires * 1000),
+              domain: cookie.domain.replace(/^\./, ''),
+              path: cookie.path,
+            }),
+            page.url(),
+            {
+              http: cookie.httpOnly,
+              secure: cookie.secure,
+              ignoreError: true,
+            },
+            (err) => (err ? reject(err) : resolve())
+          );
+        });
+      }
+    } finally {
+      await browser.close();
     }
-
-    await browser.close();
   }
 
   /** @private */

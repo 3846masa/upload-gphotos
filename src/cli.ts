@@ -27,16 +27,17 @@ interface CLIOptions {
 function decodeCookie(encoded: string, password: string) {
   try {
     const decipher = crypto.createDecipher('aes-256-cbc', password);
-    const decoded = decipher.update(encoded, 'base64', 'utf8');
+    const decoded = [decipher.update(encoded, 'base64', 'utf8'), decipher.final('utf8')].join('');
     return tough.CookieJar.fromJSON(decoded);
-  } catch (_err) {
+  } catch (err) {
     return new tough.CookieJar();
   }
 }
 
 function encodeCookie(jar: tough.CookieJar, password: string) {
   const cipher = crypto.createCipher('aes-256-cbc', password);
-  const decoded = Buffer.concat([cipher.update(JSON.stringify(jar), 'utf8'), cipher.final()]).toString('base64');
+  const cookie = JSON.stringify(jar.toJSON());
+  const decoded = [cipher.update(cookie, 'utf8', 'base64'), cipher.final('base64')].join('');
   return decoded;
 }
 

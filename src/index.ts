@@ -10,7 +10,6 @@ import * as chromeFinder from 'chrome-launcher/dist/chrome-finder';
 import Axios, { AxiosInstance } from 'axios';
 import cookieJarSupport from '@3846masa/axios-cookiejar-support';
 
-import uploadInfoTemplate from './util/uploadInfoTemplate';
 import extractTokensFromDOM from './util/extractTokensFromDOM';
 import Album from './Album';
 import Photo from './Photo';
@@ -336,38 +335,22 @@ class GPhotos {
   async uploadFromStream(stream: NodeJS.ReadableStream, size: number, fileName?: string) {
     stream.pause();
 
-    const sendInfo = uploadInfoTemplate();
-    for (let field of sendInfo.createSessionRequest.fields) {
-      if (field.external) {
-        field.external.filename = fileName || Date.now().toString(10);
-        field.external.size = size;
-      } else if (field.inlined) {
-        const name = field.inlined.name;
-        if (name !== 'effective_id' && name !== 'owner_name') continue;
-        field.inlined.content = this.params.userId;
-      }
-    }
-
-    const serverStatusRes = await this.axios.post(
-      'https://photos.google.com/_/upload/photos/resumable?authuser=0',
-      JSON.stringify(sendInfo),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-        },
-      }
-    );
+    const serverStatusRes = await this.axios.post('https://photos.google.com/_/upload/uploadmedia/interactive', '', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'X-Goog-Upload-Command': 'start',
+        'X-Goog-Upload-File-Name': fileName,
+        'X-Goog-Upload-Raw-Size': size,
+        'X-Goog-Upload-Header-Content-Length': size,
+        'X-Goog-Upload-Protocol': 'resumable',
+      },
+    });
 
     if (serverStatusRes.status !== 200) {
       return Promise.reject(new Error(`Server Error: ${serverStatusRes.status}`));
     }
 
-    const serverStatus = JSON.parse(serverStatusRes.data);
-    if (!('sessionStatus' in serverStatus)) {
-      return Promise.reject(new Error('Server Error: sessionStatus is not found.'));
-    }
-
-    const sendUrl = serverStatus.sessionStatus.externalFieldTransfers[0].putInfo.url;
+    const sendUrl = serverStatusRes.headers['x-goog-upload-url'];
 
     if (this.options.progress) {
       const progressBar = new ProgressBar(`${colors.green('Uploading')} [:bar] :percent :etas`, {
@@ -380,31 +363,34 @@ class GPhotos {
       stream.on('end', () => process.stderr.write('\n'));
     }
 
-    const resultRes = await this.axios.post(sendUrl, stream, {
+    const resultRes = await this.axios.post<ArrayBuffer>(sendUrl, stream, {
+      responseType: 'arraybuffer',
       headers: {
         'Content-Type': 'application/octet-stream',
-        'X-HTTP-Method-Override': 'PUT',
+        'X-Goog-Upload-Command': 'upload, finalize',
+        'X-Goog-Upload-File-Name': fileName,
+        'X-Goog-Upload-Offset': 0,
       },
     });
 
-    const result = JSON.parse(resultRes.data);
-    if (result.sessionStatus.state !== 'FINALIZED') {
-      return Promise.reject(new Error(`Upload Error: ${result.sessionStatus.state}`));
+    if (resultRes.headers['x-goog-upload-status'] !== 'final') {
+      return Promise.reject(new Error(`Upload Error`));
     }
 
-    const uploadInfo =
-      result.sessionStatus.additionalInfo['uploader_service.GoogleRupioAdditionalInfo'].completionInfo
-        .customerSpecificInfo;
+    const uploadToken = (() => {
+      const str = Buffer.from(resultRes.data).toString();
+      if (/^[A-Za-z0-9+/=]+$/.test(str)) {
+        return str;
+      }
+      return Buffer.from(resultRes.data).toString('base64');
+    })();
+
+    const { mdpdU: result } = await this.sendBatchExecute({
+      mdpdU: [[[uploadToken, fileName, Date.now()]]],
+    });
 
     const uploadedPhoto = new Photo({
-      id: uploadInfo.photoMediaKey,
-      uploadedAt: new Date(),
-      createdAt: new Date(uploadInfo.timestamp * 1000),
-      type: uploadInfo.kind,
-      title: uploadInfo.title,
-      description: uploadInfo.description,
-      rawUrl: uploadInfo.url,
-      uploadInfo: uploadInfo,
+      ...Photo.parseInfo(result[0][0][1]),
       gphotos: this,
     });
     return uploadedPhoto;

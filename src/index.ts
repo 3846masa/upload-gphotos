@@ -5,6 +5,8 @@ import * as tough from 'tough-cookie';
 import * as ProgressBar from 'progress';
 import * as colors from 'colors';
 import * as puppeteer from 'puppeteer-core';
+import { getPlatform } from 'chrome-launcher/dist/utils';
+import * as chromeFinder from 'chrome-launcher/dist/chrome-finder';
 import Axios, { AxiosInstance } from 'axios';
 import cookieJarSupport from '@3846masa/axios-cookiejar-support';
 
@@ -133,8 +135,13 @@ class GPhotos {
 
   /** @private */
   async postLogin() {
+    const chromePath = process.env.PUPPETEER_EXECUTABLE_PATH || (await (chromeFinder as any)[getPlatform()]())[0];
+    if (!chromePath) {
+      throw new Error('Chrome / Chromium is not installed.');
+    }
+
     const browser = await puppeteer.launch({
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      executablePath: chromePath,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 

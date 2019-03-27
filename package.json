@@ -33,7 +33,6 @@
     "@3846masa/axios-cookiejar-support": "^0.4.2",
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
-    "chrome-launcher": "^0.10.5",
     "colors": "^1.1.2",
     "configstore": "^4.0.0",
     "escodegen": "^1.9.1",

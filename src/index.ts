@@ -134,6 +134,10 @@ class GPhotos {
 
   /** @private */
   async postLogin() {
+    if (!this.username || !this.password) {
+      throw new Error('Login was failed. Please try to login with username and password.');
+    }
+
     const chromePath = process.env.PUPPETEER_EXECUTABLE_PATH || (await (chromeFinder as any)[getPlatform()]())[0];
     if (!chromePath) {
       throw new Error('Chrome / Chromium is not installed.');

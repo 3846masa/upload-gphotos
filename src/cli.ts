@@ -12,6 +12,7 @@ import GPhotos from './';
 import GPhotosPhoto from './Photo';
 import GPhotosAlbum from './Album';
 import wait from './util/wait';
+import parseEditThisCookieJSON from './util/parseEditThisCookieJSON';
 
 const packageInfo = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 
@@ -21,6 +22,7 @@ interface CLIOptions {
   retry: number;
   album: string[];
   quiet: boolean;
+  cookies: string;
   version: boolean;
 }
 
@@ -65,7 +67,7 @@ yargs.usage(
   `
 Upload-GPhotos ${packageInfo.version}
 
-Usage: upload-gphotos file [...] [--quiet] [-r retry] [-u username] [-p password] [-a albumname]
+Usage: upload-gphotos file [...] [--quiet] [-r retry] [-u username] [-p password] [-c <cookies.json>] [-a albumname]
   `.trim()
 );
 yargs.options('r', {
@@ -93,6 +95,10 @@ yargs.options('q', {
   default: false,
   desc: 'Prevent to show progress.',
 });
+yargs.options('c', {
+  alias: 'cookies',
+  desc: 'Use EditThisCookie exported JSON file.',
+});
 yargs.help('h').alias('h', 'help');
 yargs.alias('v', 'version');
 
@@ -102,6 +108,7 @@ const {
   quiet,
   retry,
   album: albumNameList,
+  cookies: cookiesJSONFilePath,
   version: showVersion,
   _: files,
 } = yargs.argv as Arguments<CLIOptions>;
@@ -119,26 +126,28 @@ if (showVersion) {
     process.abort();
   }
 
-  const { username = _username, password = _password } = (await inquirer.prompt([
+  const { username = _username, password = _password } = await inquirer.prompt([
     {
       type: 'input',
       name: 'username',
       message: 'Username?',
-      when: !_username,
+      when: !_username && !cookiesJSONFilePath,
     },
     {
       type: 'password',
       name: 'password',
       message: 'Password?',
-      when: !_password,
+      when: !_password && !cookiesJSONFilePath,
     },
-  ])) as { username: string; password: string };
+  ]);
 
   // Restore cookies
   const conf = new Configstore(packageInfo.name, {});
   const jar =
     conf.has('jar') && username === conf.get('username')
       ? decodeCookie(conf.get('jar'), password)
+      : cookiesJSONFilePath
+      ? await parseEditThisCookieJSON(cookiesJSONFilePath)
       : new tough.CookieJar();
 
   // Login
@@ -157,8 +166,10 @@ if (showVersion) {
   });
 
   // Store cookies
-  conf.set('username', username);
-  conf.set('jar', encodeCookie(jar, password));
+  if (!cookiesJSONFilePath && username && password) {
+    conf.set('username', username);
+    conf.set('jar', encodeCookie(jar, password));
+  }
 
   const albumList: GPhotosAlbum[] = [];
   const photos: GPhotosPhoto[] = [];

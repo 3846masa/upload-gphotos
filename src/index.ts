@@ -332,14 +332,14 @@ class GPhotos {
     return await this.uploadFromStream(fileReadStream, fileStat.size, fileName);
   }
 
-  async uploadFromStream(stream: NodeJS.ReadableStream, size: number, fileName?: string) {
+  async uploadFromStream(stream: NodeJS.ReadableStream, size: number, fileName: string) {
     stream.pause();
 
     const serverStatusRes = await this.axios.post('https://photos.google.com/_/upload/uploadmedia/interactive', '', {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         'X-Goog-Upload-Command': 'start',
-        'X-Goog-Upload-File-Name': fileName,
+        'X-Goog-Upload-File-Name': encodeURIComponent(fileName),
         'X-Goog-Upload-Raw-Size': size,
         'X-Goog-Upload-Header-Content-Length': size,
         'X-Goog-Upload-Protocol': 'resumable',
@@ -368,7 +368,7 @@ class GPhotos {
       headers: {
         'Content-Type': 'application/octet-stream',
         'X-Goog-Upload-Command': 'upload, finalize',
-        'X-Goog-Upload-File-Name': fileName,
+        'X-Goog-Upload-File-Name': encodeURIComponent(fileName),
         'X-Goog-Upload-Offset': 0,
       },
     });

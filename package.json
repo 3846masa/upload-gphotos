@@ -54,7 +54,7 @@
     "@types/escodegen": "^0.0.6",
     "@types/esprima": "^4.0.1",
     "@types/fs-extra": "^7.0.0",
-    "@types/inquirer": "^0.0.44",
+    "@types/inquirer": "^6.0.3",
     "@types/node": "^8.10.49",
     "@types/progress": "^2.0.0",
     "@types/puppeteer-core": "^1.9.0",

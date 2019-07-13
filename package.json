@@ -35,7 +35,7 @@
     "cheerio": "^1.0.0-rc.2",
     "chrome-launcher": "^0.11.1",
     "colors": "^1.1.2",
-    "configstore": "^4.0.0",
+    "configstore": "^5.0.0",
     "escodegen": "^1.9.1",
     "esprima": "^4.0.0",
     "esrecurse": "^4.2.1",

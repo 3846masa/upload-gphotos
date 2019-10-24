@@ -43,7 +43,7 @@
     "inquirer": "^6.0.0",
     "log4js": "^4.1.0",
     "progress": "^2.0.0",
-    "puppeteer-core": "^1.11.0",
+    "puppeteer-core": "^2.0.0",
     "static-eval": "^2.0.0",
     "tough-cookie": "^3.0.0",
     "yargs": "^13.1.0"

@@ -1,0 +1,31 @@
+{
+  "name": "upload-gphotos",
+  "description": "Upload to Google Photos",
+  "license": "MIT",
+  "author": "3846masa <3846masahiro+git@gmail.com>",
+  "homepage": "https://github.com/3846masa/upload-gphotos#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3846masa/upload-gphotos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/3846masa/upload-gphotos/issues"
+  },
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "bin": {
+    "upload-gphotos": "lib/cli.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {},
+  "types": "lib/index.d.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": [
+    "google photos",
+    "googlephotos",
+    "upload"
+  ]
+}

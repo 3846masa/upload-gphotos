@@ -18,8 +18,8 @@ Upload photos to Google Photos (Unofficial).
 You can select `upload-gphotos` login method.
 
 - Type username and password
-  - Required: Chrome or Chromium
-    - If you installed Chrome to custom path, set `PUPPETEER_EXECUTABLE_PATH`
+- Required: Chrome or Chromium
+  - If you installed Chrome to custom path, set `PUPPETEER_EXECUTABLE_PATH`
 - Load [EditThisCookie](http://www.editthiscookie.com/) exported JSON
   - Required: JSON exported via EditThisCookie
 
@@ -55,7 +55,7 @@ Download your platform's binary via [GitHub Releases].
 ## Usage
 
 ```
-$ upload-gphotos [<file>...] [--quiet] [-r <retry>] [-u <username>] [-p <password>] [-c <cookies.json>] [-a <albumname>]
+$ upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u username] [-p password] [-a albumname]
 ```
 
 ## Library

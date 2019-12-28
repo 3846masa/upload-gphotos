@@ -15,13 +15,8 @@ Upload photos to Google Photos (Unofficial).
 
 ## Requirement
 
-You can select `upload-gphotos` login method.
-
-- Type username and password
 - Required: Chrome or Chromium
   - If you installed Chrome to custom path, set `PUPPETEER_EXECUTABLE_PATH`
-- Load [EditThisCookie](http://www.editthiscookie.com/) exported JSON
-  - Required: JSON exported via EditThisCookie
 
 ## Preparation
 
@@ -63,14 +58,31 @@ $ upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u username
 This is also Node.js library.
 
 ```js
-(async () => {
-  const gphotos = new GPhotos({ username: '', password: '' });
-  await gphotos.login();
+const fs = require('fs');
+const libpath = require('path');
+const { GPhotos } = require('upload-gphotos');
 
-  const photo = await gphotos.upload(filePath);
-  const album = await gphotos.searchOrCreateAlbum('TestAlbum');
-  await album.addPhoto(photo);
-})();
+const gphotos = new GPhotos();
+const filepath = libpath.join(__dirname, './example.jpg');
+
+(async () => {
+  await gphotos.signin({
+    username: process.env.GPHOTOS_USERNAME,
+    password: process.env.GPHOTOS_PASSWORD,
+  });
+
+  const album = await gphotos.searchAlbum({ title: 'TestAlbum' });
+
+  const photo = await gphotos.upload({
+    stream: fs.createReadStream(filepath),
+    size: (await fs.promises.stat(filepath)).size,
+    filename: libpath.basename(filepath),
+  });
+
+  await album.append(photo);
+
+  console.log(photo);
+})().catch(console.error);
 ```
 
 See [Documentation].

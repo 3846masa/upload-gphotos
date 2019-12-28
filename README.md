@@ -2,16 +2,15 @@
 
 [![NPM](https://nodei.co/npm/upload-gphotos.png?compact=true)](https://nodei.co/npm/upload-gphotos/)
 
-[![NPM VERSION](https://img.shields.io/npm/v/upload-gphotos.svg?style=flat-square)](https://www.npmjs.com/package/upload-gphotos)
-[![GITHUB RELEASE](https://img.shields.io/github/release/3846masa/upload-gphotos.svg?style=flat-square)](https://github.com/3846masa/upload-gphotos/releases)
-[![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](./LICENSE)
-[![Greenkeeper badge](https://img.shields.io/badge/Greenkeeper-enabled-brightgreen.svg?style=flat-square)](https://greenkeeper.io/)
+[![NPM VERSION](https://flat.badgen.net/npm/v/upload-gphotos?icon=npm)](https://www.npmjs.com/package/upload-gphotos)
+[![GITHUB RELEASE](https://flat.badgen.net/github/release/3846masa/upload-gphotos)](https://github.com/3846masa/upload-gphotos/releases)
+[![LICENSE](https://flat.badgen.net/github/license/3846masa/upload-gphotos)](./LICENSE)
 
 Google Photos にファイルをアップロード．
 
 Upload photos to Google Photos (Unofficial).
 
-**CAUTION** | This library don't use Official Google Photos API. **USE AT YOUR OWN RISK**
+**CAUTION** | This library use an internal Google Photos API. **USE AT YOUR OWN RISK**
 
 ## Requirement
 
@@ -35,17 +34,17 @@ Upload photos to Google Photos (Unofficial).
 
 ## Installation
 
-### npm (Recommended)
-
-```
-$ npm install -g upload-gphotos
-```
-
-### Executable file
+### Executable file (Recommended)
 
 Download your platform's binary via [GitHub Releases].
 
 [github releases]: https://github.com/3846masa/upload-gphotos/releases
+
+### npm
+
+```
+$ npm install -g upload-gphotos
+```
 
 ## Usage
 
@@ -67,8 +66,8 @@ const filepath = libpath.join(__dirname, './example.jpg');
 
 (async () => {
   await gphotos.signin({
-    username: process.env.GPHOTOS_USERNAME,
-    password: process.env.GPHOTOS_PASSWORD,
+    username,
+    password,
   });
 
   const album = await gphotos.searchAlbum({ title: 'TestAlbum' });
@@ -84,10 +83,6 @@ const filepath = libpath.join(__dirname, './example.jpg');
   console.log(photo);
 })().catch(console.error);
 ```
-
-See [Documentation].
-
-[documentation]: https://3846masa.github.io/upload-gphotos/modules/_index_.html
 
 ## FAQ
 

@@ -1369,27 +1369,18 @@ puppeteer-core@^2.0.0:
     rimraf "^2.6.1"
     ws "^6.1.0"
 
-puppeteer-extra-plugin-anonymize-ua@^2.2.6:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-anonymize-ua/-/puppeteer-extra-plugin-anonymize-ua-2.2.6.tgz#e9edab73c274cef87a0c317bcc64f5afd51386f2"
-  integrity sha512-Ja5TjXLC+FxJNBzCkBSVVixGEuO3B6kZGpnse1+VpgAcCMcRSw82AD1k3e5a+YndZloGEQBU/kiVlaWAjTXMbw==
+puppeteer-extra-plugin-stealth@^2.4.9:
+  version "2.4.9"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-stealth/-/puppeteer-extra-plugin-stealth-2.4.9.tgz#51ae7261bb135ba8fdd580bb90a8a4d6718c528c"
+  integrity sha512-KAu/fKjcsl1LwVZNynQvG8870JG7Wr4JbPkitV9qsL4U/KHuN855+Nt/yfbQwdVL33nFp1AUK2y4y9XW8SFRFQ==
   dependencies:
     debug "^4.1.1"
-    puppeteer-extra-plugin "^3.1.2"
+    puppeteer-extra-plugin "^3.1.4"
 
-puppeteer-extra-plugin-stealth@^2.4.5:
-  version "2.4.5"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-stealth/-/puppeteer-extra-plugin-stealth-2.4.5.tgz#5d45eb87228b0e6aa09808d80e68ef3f42820d69"
-  integrity sha512-RUr9tvyvKOqH/yJ4tjcywbnkQbE99AhFD7uYKLO4YG0FIGNdaDdRrpiL2bgHo/bvIJDpfZwlO8YnhfmLnq6RNA==
-  dependencies:
-    debug "^4.1.1"
-    puppeteer-extra-plugin "^3.1.2"
-    puppeteer-extra-plugin-anonymize-ua "^2.2.6"
-
-puppeteer-extra-plugin@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin/-/puppeteer-extra-plugin-3.1.2.tgz#c5d2cbaa991926f145bf5f7b12757b4ced41daac"
-  integrity sha512-6hrqz8JqTjgEqIqSSt/PFoUncjQ00uYpWBYmAnz4iZvlMcnXE4doZIwIfDGQLdMgXPfR27VRucg59U/rd1i8Sw==
+puppeteer-extra-plugin@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin/-/puppeteer-extra-plugin-3.1.4.tgz#7aafde69c4189d10ba729242550b152bb2dd5d11"
+  integrity sha512-RXRearBnR9lbrwnnOpTdXvdRi/+tUYcrZp957+Pwnw7vyrUb4l8WNRO8VSC4lkX8RYYqbPg3aAQGWZlBX6bmQA==
   dependencies:
     "@types/debug" "^4.1.0"
     debug "^4.1.1"

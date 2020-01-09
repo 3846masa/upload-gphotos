@@ -16,15 +16,15 @@ const MACOS_CHROME_PATH_LIST = [
   .map((path) => {
     return ['', process.env.HOME].filter(isNotUndefined).map((programDir) => libpath.join(programDir, path));
   })
-  .flat();
+  .reduce((a, b) => [...a, ...b], []);
 
-const WIN32_CHROEM_PATH_LIST = ['\\Google\\Chrome\\Application\\chrome.exe', '\\Chromium\\Application\\chrome.exe']
+const WIN32_CHROME_PATH_LIST = ['\\Google\\Chrome\\Application\\chrome.exe', '\\Chromium\\Application\\chrome.exe']
   .map((path) => {
     return [process.env.LOCALAPPDATA, process.env.PROGRAMFILES, process.env['PROGRAMFILES(X86)']]
       .filter(isNotUndefined)
       .map((programDir) => libpath.join(programDir, path));
   })
-  .flat();
+  .reduce((a, b) => [...a, ...b], []);
 
 function getChromePathList(): Maybe<string>[] {
   if (process.platform === 'linux') {
@@ -34,7 +34,7 @@ function getChromePathList(): Maybe<string>[] {
     return MACOS_CHROME_PATH_LIST.filter((path) => fs.existsSync(path));
   }
   if (process.platform === 'win32') {
-    return WIN32_CHROEM_PATH_LIST.filter((path) => fs.existsSync(path));
+    return WIN32_CHROME_PATH_LIST.filter((path) => fs.existsSync(path));
   }
   return [];
 }

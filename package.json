@@ -28,7 +28,7 @@
   },
   "types": "lib/index.d.ts",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.19.1",
     "axios-cookiejar-support": "^0.5.1",
     "configstore": "^5.0.0",
     "inquirer": "^7.0.3",

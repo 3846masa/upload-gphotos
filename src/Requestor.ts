@@ -79,7 +79,7 @@ class Requestor {
       throw new Error(`Error batchexecute (error: ${error[error.length - 2][0]}, query: ${error[1]})`);
     }
 
-    return Object.fromEntries(results.map(([, key, raw]) => [key, JSON.parse(raw)]));
+    return results.reduce<Result>((obj, [, key, raw]) => Object.assign(obj, { [key]: JSON.parse(raw) }), {} as any);
   }
 
   async upload({

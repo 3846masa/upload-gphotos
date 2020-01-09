@@ -58,5 +58,8 @@
     "google photos",
     "googlephotos",
     "upload"
-  ]
+  ],
+  "engines": {
+    "node": ">=10.0.0"
+  }
 }

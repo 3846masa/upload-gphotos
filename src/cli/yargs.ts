@@ -21,7 +21,7 @@ Usage: upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u use
       desc: 'The number of times to retry when failed uploads.',
     },
     username: {
-      alias: 'username',
+      alias: 'u',
       type: 'string',
       desc: 'Google account username.',
     },

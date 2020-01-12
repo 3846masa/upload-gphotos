@@ -1,6 +1,6 @@
 import util from 'util';
 import { CookieJar } from 'tough-cookie';
-import { Nullable, isNotNull } from 'option-t/cjs/Nullable';
+import { Nullable, isNotNull, isNull } from 'option-t/cjs/Nullable';
 
 import { signinViaPuppeteer } from './signin_via_puppeteer';
 import { Requestor } from './Requestor';
@@ -40,12 +40,19 @@ class GPhotos {
     const {
       Z5xsfc: [albumInfoList, nextCursor],
     } = await this.requestor.sendBatchExecute<{
-      Z5xsfc: [any[], Nullable<string>];
+      Z5xsfc: [Nullable<any[]>, Nullable<string>];
     }>({
       queries: {
         Z5xsfc: [cursor, null, null, null, 1],
       },
     });
+
+    if (isNull(albumInfoList)) {
+      return {
+        results: [],
+        nextCursor: null,
+      };
+    }
 
     const albumList = albumInfoList.map((data) => {
       return new GPhotosAlbum(GPhotosAlbum.parseInfo(data), {

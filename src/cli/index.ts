@@ -6,6 +6,7 @@ import Configstore from 'configstore';
 import { CookieJar } from 'tough-cookie';
 import pRetry from 'p-retry';
 import ora from 'ora';
+import { Nullable, isNull } from 'option-t/cjs/Nullable';
 
 import { GPhotos, GPhotosAlbum } from '../';
 import { LIBRARY_NAME } from '../constants';
@@ -69,11 +70,10 @@ if (yargs.argv.version) {
   conf.set('jar', encoded.encoded);
   conf.set('iv', encoded.iv.toString('base64'));
 
-  const albumList: GPhotosAlbum[] = await Promise.all(
-    yargs.argv.album.map(async (title) => {
-      return (await gphotos.searchAlbum({ title })) || (await gphotos.createAlbum({ title }));
-    }),
-  );
+  const albumMap: Map<string, Nullable<GPhotosAlbum>> = new Map();
+  for (const albumName of yargs.argv.album) {
+    albumMap.set(albumName, await gphotos.searchAlbum({ title: albumName }));
+  }
 
   for (const filepath of files) {
     const spinner = ora();
@@ -104,7 +104,11 @@ if (yargs.argv.version) {
       },
     );
 
-    for (const album of albumList) {
+    for (let [albumName, album] of albumMap.entries()) {
+      if (isNull(album)) {
+        album = await gphotos.createAlbum({ title: albumName });
+        albumMap.set(albumName, album);
+      }
       await album.append(photo);
     }
 

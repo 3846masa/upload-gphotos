@@ -45,7 +45,7 @@
   "devDependencies": {
     "@types/configstore": "^4.0.0",
     "@types/inquirer": "^6.5.0",
-    "@types/node": "^12.12.24",
+    "@types/node": "^12.12.25",
     "@types/puppeteer-core": "^2.0.0",
     "@types/tough-cookie": "^2.3.6",
     "@types/which": "^1.3.2",

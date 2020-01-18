@@ -1,5 +1,6 @@
 import util from 'util';
 import { Nullable } from 'option-t/cjs/Nullable';
+import { Maybe, isNotNullAndUndefined } from 'option-t/cjs/Maybe';
 
 import { Requestor } from './Requestor';
 import { GPhotosPhoto } from './GPhotosPhoto';
@@ -73,7 +74,7 @@ class GPhotosAlbum {
     const {
       snAcKc: [, photoInfoList, nextCursor],
     } = await this.requestor.sendBatchExecute<{
-      snAcKc: [unknown, any[], Nullable<string>];
+      snAcKc: [unknown, any[], Maybe<string>];
     }>({
       queries: {
         snAcKc: [this.id, cursor, null, null, 0],
@@ -84,7 +85,7 @@ class GPhotosAlbum {
       return new GPhotosPhoto(GPhotosPhoto.parseInfo(info), { requestor: this.requestor });
     });
 
-    return { results: photoList, nextCursor };
+    return { results: photoList, nextCursor: isNotNullAndUndefined(nextCursor) ? nextCursor : null };
   }
 
   async delete(): Promise<void> {

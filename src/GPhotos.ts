@@ -1,6 +1,7 @@
 import util from 'util';
 import { CookieJar } from 'tough-cookie';
 import { Nullable, isNotNull, isNull } from 'option-t/cjs/Nullable';
+import { Maybe, isNotNullAndUndefined } from 'option-t/cjs/Maybe';
 
 import { signinViaPuppeteer } from './signin_via_puppeteer';
 import { Requestor } from './Requestor';
@@ -40,7 +41,7 @@ class GPhotos {
     const {
       Z5xsfc: [albumInfoList, nextCursor],
     } = await this.requestor.sendBatchExecute<{
-      Z5xsfc: [Nullable<any[]>, Nullable<string>];
+      Z5xsfc: [Nullable<any[]>, Maybe<string>];
     }>({
       queries: {
         Z5xsfc: [cursor, null, null, null, 1],
@@ -60,7 +61,7 @@ class GPhotos {
       });
     });
 
-    return { results: albumList, nextCursor };
+    return { results: albumList, nextCursor: isNotNullAndUndefined(nextCursor) ? nextCursor : null };
   }
 
   async searchAlbum({ title }: { title: string }): Promise<Nullable<GPhotosAlbum>> {
@@ -82,16 +83,12 @@ class GPhotos {
 
   async createAlbum({ title }: { title: string }): Promise<GPhotosAlbum> {
     const {
-      results: [latestPhoto],
-    } = await this.fetchPhotoList({ cursor: null });
-
-    const {
       OXvT9d: [[albumId]],
     } = await this.requestor.sendBatchExecute<{
       OXvT9d: [[string]];
     }>({
       queries: {
-        OXvT9d: [title, null, 1, [[[latestPhoto.id]]]],
+        OXvT9d: [title, null, 2, []],
       },
     });
 
@@ -106,11 +103,6 @@ class GPhotos {
       },
       { requestor: this.requestor },
     );
-
-    const {
-      results: [insertedPhoto],
-    } = await album.fetchPhotoList({ cursor: null });
-    await album.remove(insertedPhoto);
 
     return album;
   }
@@ -129,7 +121,7 @@ class GPhotos {
     const {
       lcxiM: [photoInfoList, nextCursor],
     } = await this.requestor.sendBatchExecute<{
-      lcxiM: [any[], Nullable<string>];
+      lcxiM: [any[], Maybe<string>];
     }>({
       queries: {
         lcxiM: [cursor, null, null, null, 1],
@@ -140,7 +132,7 @@ class GPhotos {
       return new GPhotosPhoto(GPhotosPhoto.parseInfo(info), { requestor: this.requestor });
     });
 
-    return { results: photoList, nextCursor };
+    return { results: photoList, nextCursor: isNotNullAndUndefined(nextCursor) ? nextCursor : null };
   }
 
   async upload({

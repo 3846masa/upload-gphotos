@@ -1,6 +1,7 @@
 import util from 'util';
 import { CookieJar } from 'tough-cookie';
 import { Nullable, isNotNull, isNull } from 'option-t/cjs/Nullable';
+import { Maybe, isNullOrUndefined } from 'option-t/cjs/Maybe';
 
 import { signinViaPuppeteer } from './signin_via_puppeteer';
 import { Requestor } from './Requestor';
@@ -40,7 +41,7 @@ class GPhotos {
     const {
       Z5xsfc: [albumInfoList, nextCursor],
     } = await this.requestor.sendBatchExecute<{
-      Z5xsfc: [Nullable<any[]>, Nullable<string>];
+      Z5xsfc: [Nullable<any[]>, Maybe<string>];
     }>({
       queries: {
         Z5xsfc: [cursor, null, null, null, 1],
@@ -59,6 +60,11 @@ class GPhotos {
         requestor: this.requestor,
       });
     });
+
+    // NOTE: Cursor maybe undefined or null or empty string.
+    if (isNullOrUndefined(nextCursor) || cursor === '') {
+      return { results: albumList, nextCursor: null };
+    }
 
     return { results: albumList, nextCursor };
   }
@@ -129,7 +135,7 @@ class GPhotos {
     const {
       lcxiM: [photoInfoList, nextCursor],
     } = await this.requestor.sendBatchExecute<{
-      lcxiM: [any[], Nullable<string>];
+      lcxiM: [any[], Maybe<string>];
     }>({
       queries: {
         lcxiM: [cursor, null, null, null, 1],
@@ -139,6 +145,11 @@ class GPhotos {
     const photoList = photoInfoList.map((info) => {
       return new GPhotosPhoto(GPhotosPhoto.parseInfo(info), { requestor: this.requestor });
     });
+
+    // NOTE: Cursor maybe undefined or null or empty string.
+    if (isNullOrUndefined(nextCursor) || nextCursor === '') {
+      return { results: photoList, nextCursor: null };
+    }
 
     return { results: photoList, nextCursor };
   }

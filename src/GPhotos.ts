@@ -88,16 +88,12 @@ class GPhotos {
 
   async createAlbum({ title }: { title: string }): Promise<GPhotosAlbum> {
     const {
-      results: [latestPhoto],
-    } = await this.fetchPhotoList({ cursor: null });
-
-    const {
       OXvT9d: [[albumId]],
     } = await this.requestor.sendBatchExecute<{
       OXvT9d: [[string]];
     }>({
       queries: {
-        OXvT9d: [title, null, 1, [[[latestPhoto.id]]]],
+        OXvT9d: [title, null, 2, []],
       },
     });
 
@@ -106,17 +102,12 @@ class GPhotos {
         title,
         id: albumId,
         type: 'album',
-        period: { from: new Date(), to: new Date() },
+        period: { from: new Date(0), to: new Date(0) },
         itemsCount: 0,
         isShared: false,
       },
       { requestor: this.requestor },
     );
-
-    const {
-      results: [insertedPhoto],
-    } = await album.fetchPhotoList({ cursor: null });
-    await album.remove(insertedPhoto);
 
     return album;
   }

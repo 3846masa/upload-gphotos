@@ -49,7 +49,7 @@ $ npm install -g upload-gphotos
 ## Usage
 
 ```
-$ upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u username] [-p password] [-a albumname]
+$ upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u username] [-p password] [-a albumname] [--aid albumid]
 ```
 
 ## Library

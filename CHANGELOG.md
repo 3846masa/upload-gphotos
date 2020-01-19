@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0]
+
+### Added
+
+- [Add fetchAlbumById method and CLI option for using albumId](https://github.com/3846masa/upload-gphotos/pull/463)
+
+### Fixed
+
+- [Optimize to create album](https://github.com/3846masa/upload-gphotos/pull/462)
+- [Fix to check nextCursor is empty](https://github.com/3846masa/upload-gphotos/pull/461)
+
 ## [4.1.1]
 
 ### Fixed
@@ -25,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Refactor all files.
 
+[4.2.0]: https://github.com/3846masa/upload-gphotos/releases/tag/v4.2.0
 [4.1.1]: https://github.com/3846masa/upload-gphotos/releases/tag/v4.1.1
 [4.1.0]: https://github.com/3846masa/upload-gphotos/releases/tag/v4.1.0
 [4.0.0]: https://github.com/3846masa/upload-gphotos/releases/tag/v4.0.0

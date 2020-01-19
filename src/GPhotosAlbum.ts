@@ -1,5 +1,6 @@
 import util from 'util';
 import { Nullable } from 'option-t/cjs/Nullable';
+import { isNotUndefined } from 'option-t/cjs/Undefinable';
 import { Maybe, isNullOrUndefined } from 'option-t/cjs/Maybe';
 
 import { Requestor } from './Requestor';
@@ -21,6 +22,7 @@ class GPhotosAlbum {
 
   static parseInfo(data: any): GPhotosAlbumInfo {
     const info = data.pop()['72930366'];
+
     return {
       id: data.shift(),
       type: 'album',
@@ -40,8 +42,35 @@ class GPhotosAlbum {
     this.requestor = requestor;
   }
 
-  async getInfo(): Promise<Required<GPhotosAlbumInfo>> {
-    return this.info as Required<GPhotosAlbumInfo>;
+  async getInfo({ force }: { force: boolean } = { force: false }): Promise<Required<GPhotosAlbumInfo>> {
+    if (!force && isNotUndefined(this.info.title)) {
+      return this.info as Required<GPhotosAlbumInfo>;
+    }
+
+    const {
+      snAcKc: [, , , info],
+    } = await this.requestor.sendBatchExecute<{
+      snAcKc: [unknown, unknown, unknown, any];
+    }>({
+      queries: {
+        snAcKc: [this.id, null, null, null, 0],
+      },
+    });
+
+    const parsedInfo: Required<GPhotosAlbumInfo> = {
+      id: this.id,
+      type: 'album',
+      title: info[1],
+      period: {
+        from: new Date(info[2][0]),
+        to: new Date(info[2][1]),
+      },
+      itemsCount: info[21],
+      isShared: info[8] === true,
+    };
+
+    this.info = parsedInfo;
+    return parsedInfo;
   }
 
   async append(...photoList: GPhotosPhoto[]): Promise<void> {

@@ -33,6 +33,12 @@ class GPhotos {
     }
   }
 
+  async fetchAlbumoById({ id }: { id: string }): Promise<GPhotosAlbum> {
+    const album = new GPhotosAlbum({ id, type: 'album' }, { requestor: this.requestor });
+    await album.getInfo();
+    return album;
+  }
+
   async fetchAlbumList({
     cursor,
   }: {

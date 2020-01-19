@@ -9,10 +9,11 @@ const yargs = _yargs
   .usage(
     `
 Upload-GPhotos ${packageInfo.version}
-Usage: upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u username] [-p password] [-a albumname]
+Usage: upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u username] [-p password] [-a albumname] [--aid albumid]
   `.trim(),
   )
   .help('help')
+  .strict()
   .options({
     retry: {
       alias: 'r',
@@ -34,7 +35,13 @@ Usage: upload-gphotos file [...] [--no-output-json] [--quiet] [-r retry] [-u use
       alias: 'a',
       type: 'array',
       default: [] as string[],
-      desc: 'An albums to put uploaded files.',
+      desc: 'The names of albums to put uploaded files.',
+    },
+    'album-id': {
+      alias: 'aid',
+      type: 'array',
+      default: [] as string[],
+      desc: 'The ids of albums to put uploaded files.',
     },
     quiet: {
       type: 'boolean',

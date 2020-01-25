@@ -2,6 +2,7 @@ import util from 'util';
 import { CookieJar } from 'tough-cookie';
 import { Nullable, isNotNull, isNull } from 'option-t/cjs/Nullable';
 import { Maybe, isNullOrUndefined } from 'option-t/cjs/Maybe';
+import { isUndefined } from 'option-t/cjs/Undefinable';
 
 import { signinViaPuppeteer } from './signin_via_puppeteer';
 import { Requestor } from './Requestor';
@@ -93,13 +94,51 @@ class GPhotos {
   }
 
   async createAlbum({ title }: { title: string }): Promise<GPhotosAlbum> {
+    try {
+      const {
+        OXvT9d: [[albumId]],
+      } = await this.requestor.sendBatchExecute<{
+        OXvT9d: [[string]];
+      }>({
+        queries: {
+          OXvT9d: [title, null, 2, []],
+        },
+      });
+
+      const album = new GPhotosAlbum(
+        {
+          title,
+          id: albumId,
+          type: 'album',
+          period: { from: new Date(0), to: new Date(0) },
+          itemsCount: 0,
+          isShared: false,
+        },
+        { requestor: this.requestor },
+      );
+
+      return album;
+    } catch (_err) {
+      return this.createAlbumLegacyFallback({ title });
+    }
+  }
+
+  private async createAlbumLegacyFallback({ title }: { title: string }): Promise<GPhotosAlbum> {
+    const {
+      results: [latestPhoto],
+    } = await this.fetchPhotoList({ cursor: null });
+
+    if (isUndefined(latestPhoto)) {
+      throw new Error('No photos exists in your account.');
+    }
+
     const {
       OXvT9d: [[albumId]],
     } = await this.requestor.sendBatchExecute<{
       OXvT9d: [[string]];
     }>({
       queries: {
-        OXvT9d: [title, null, 2, []],
+        OXvT9d: [title, null, 1, [[[latestPhoto.id]]]],
       },
     });
 
@@ -114,6 +153,11 @@ class GPhotos {
       },
       { requestor: this.requestor },
     );
+
+    const {
+      results: [insertedPhoto],
+    } = await album.fetchPhotoList({ cursor: null });
+    await album.remove(insertedPhoto);
 
     return album;
   }

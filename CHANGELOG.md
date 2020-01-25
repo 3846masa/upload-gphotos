@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.2.1]
 
+### Fixed
+
 - [Revert legacy createalbum method for fallback](https://github.com/3846masa/upload-gphotos/pull/468)
 
 ## [4.2.0]

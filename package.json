@@ -30,7 +30,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "axios-cookiejar-support": "^0.5.1",
-    "configstore": "^5.0.0",
+    "configstore": "^5.0.1",
     "inquirer": "^7.0.4",
     "option-t": "^22.2.1",
     "ora": "^4.0.3",

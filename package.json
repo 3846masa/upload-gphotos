@@ -52,7 +52,7 @@
     "@types/yargs": "^15.0.4",
     "pkg": "^4.4.3",
     "rimraf": "^3.0.2",
-    "typescript": "^3.8.2"
+    "typescript": "^3.8.3"
   },
   "keywords": [
     "google photos",

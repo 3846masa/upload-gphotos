@@ -68,10 +68,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.1.tgz#6d11a8c2d58405b3db9388ab740106cbfa64c3c9"
   integrity sha512-hx6zWtudh3Arsbl3cXay+JnkvVgCKzCWKv42C9J01N2T2np4h8w5X8u6Tpz5mj38kE3M9FM0Pazx8vKFFMnjLQ==
 
-"@types/node@^12.12.29":
-  version "12.12.29"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.29.tgz#46275f028b4e463b9ac5fefc1d08bc66cc193f25"
-  integrity sha512-yo8Qz0ygADGFptISDj3pOC9wXfln/5pQaN/ysDIzOaAWXt73cNHmtEC8zSO2Y+kse/txmwIAJzkYZ5fooaS5DQ==
+"@types/node@^12.12.30":
+  version "12.12.30"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.30.tgz#3501e6f09b954de9c404671cefdbcc5d9d7c45f6"
+  integrity sha512-sz9MF/zk6qVr3pAnM0BSQvYIBK44tS75QC5N+VbWSE4DjCV/pJ+UzCW/F+vVnl7TkOPcuwQureKNtSSwjBTaMg==
 
 "@types/puppeteer-core@^2.0.0":
   version "2.0.0"

@@ -32,7 +32,7 @@
     "axios-cookiejar-support": "^1.0.0",
     "configstore": "^5.0.1",
     "inquirer": "^7.1.0",
-    "option-t": "^22.3.2",
+    "option-t": "^22.4.1",
     "ora": "^4.0.4",
     "p-retry": "^4.2.0",
     "puppeteer-core": "^3.3.0",

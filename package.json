@@ -61,5 +61,12 @@
   ],
   "engines": {
     "node": ">=10.0.0"
+  },
+  "pkg": {
+    "scripts": [
+      "node_modules/puppeteer-extra-plugin-stealth/evasions/**/*.js",
+      "!node_modules/puppeteer-extra-plugin-stealth/evasions/**/*.test.js",
+      "!node_modules/puppeteer-extra-plugin-stealth/evasions/**/test/*"
+    ]
   }
 }

@@ -1415,10 +1415,10 @@ puppeteer-extra-plugin@^3.1.4:
     debug "^4.1.1"
     merge-deep "^3.0.1"
 
-puppeteer-extra@^3.1.9:
-  version "3.1.9"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra/-/puppeteer-extra-3.1.9.tgz#b01c17ee7f8e6836e7d3fb4c36c4c6d1e10e6c59"
-  integrity sha512-hxyQnlZLLaA2fh6oObs2jkzAcGW6UEnPf9geEbX/UkLqp3LysouC3UDbCA2a1K4d1N73AD0afNgnADr62JBIcA==
+puppeteer-extra@^3.1.11:
+  version "3.1.11"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra/-/puppeteer-extra-3.1.11.tgz#f9a04c1d2458115241253dabbafa40c0a1633307"
+  integrity sha512-t/dSHlTiCDjay4bSKMnmwXFC8w6VFDduwxRwgkxqdLbpaVBXe7c8pAKAAorW85OEzYGnYiLtmbdlHp0uo8Lu5w==
   dependencies:
     "@types/debug" "^4.1.0"
     "@types/puppeteer" "^2.0.0"

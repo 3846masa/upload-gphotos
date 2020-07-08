@@ -1398,18 +1398,18 @@ puppeteer-core@^5.0.0:
     unbzip2-stream "^1.3.3"
     ws "^7.2.3"
 
-puppeteer-extra-plugin-stealth@^2.4.9:
-  version "2.4.9"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-stealth/-/puppeteer-extra-plugin-stealth-2.4.9.tgz#51ae7261bb135ba8fdd580bb90a8a4d6718c528c"
-  integrity sha512-KAu/fKjcsl1LwVZNynQvG8870JG7Wr4JbPkitV9qsL4U/KHuN855+Nt/yfbQwdVL33nFp1AUK2y4y9XW8SFRFQ==
+puppeteer-extra-plugin-stealth@^2.4.11:
+  version "2.4.11"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-stealth/-/puppeteer-extra-plugin-stealth-2.4.11.tgz#956f50d67b38bae4018ec6b3fe1114e14c4a0c2a"
+  integrity sha512-pgVdz3JQ6c4SzT7lITceQ4IAHUEveKqDNVTd3DOPxAJWU0MOIsUrQayncFnI+4MRFYWwdn3fjLUIabYSNuzxoQ==
   dependencies:
     debug "^4.1.1"
-    puppeteer-extra-plugin "^3.1.4"
+    puppeteer-extra-plugin "^3.1.5"
 
-puppeteer-extra-plugin@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin/-/puppeteer-extra-plugin-3.1.4.tgz#7aafde69c4189d10ba729242550b152bb2dd5d11"
-  integrity sha512-RXRearBnR9lbrwnnOpTdXvdRi/+tUYcrZp957+Pwnw7vyrUb4l8WNRO8VSC4lkX8RYYqbPg3aAQGWZlBX6bmQA==
+puppeteer-extra-plugin@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin/-/puppeteer-extra-plugin-3.1.5.tgz#820c9d117aaf8cc0be25fb708ee0b1ca436b9626"
+  integrity sha512-RNfxyTF/V9p5RgQ9rTrfEFkbNo57YFCuoNbVtR6C/00dUgEhZ6N1NzeY8gEP9eBnVBwnK8aWI8JnCLBkdYqImg==
   dependencies:
     "@types/debug" "^4.1.0"
     debug "^4.1.1"

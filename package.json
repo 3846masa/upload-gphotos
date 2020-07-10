@@ -31,7 +31,7 @@
     "axios": "^0.19.2",
     "axios-cookiejar-support": "^1.0.0",
     "configstore": "^5.0.1",
-    "inquirer": "^7.3.0",
+    "inquirer": "^7.3.1",
     "option-t": "^22.4.2",
     "ora": "^4.0.4",
     "p-retry": "^4.2.0",

@@ -195,10 +195,10 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.0.tgz#24390e6ad61386b0a747265754d2a17219de862c"
   integrity sha512-Uvq6hVe90D0B2WEnUqtdgY1bATGz3mw33nH9Y+dmA+w5DHvUmBgkr5rM/KCHpCsiFNRUfokW/szpPPgMK2hm4A==
 
-axios-cookiejar-support@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/axios-cookiejar-support/-/axios-cookiejar-support-1.0.0.tgz#9fceb20d3dd541eec1eb1a346bf3265a3b6e7bca"
-  integrity sha512-9pBlIU5jfrGZTnUQlt8symShviSTOSlOKGtryHx76lJPnKIXDqUT3JDAjJ1ywOQLyfiWrthIt4iJiVP2L2S4jA==
+axios-cookiejar-support@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/axios-cookiejar-support/-/axios-cookiejar-support-1.0.1.tgz#7b32af7d932508546c68b1fc5ba8f562884162e1"
+  integrity sha512-IZJxnAJ99XxiLqNeMOqrPbfR7fRyIfaoSLdPUf4AMQEGkH8URs0ghJK/xtqBsD+KsSr3pKl4DEQjCn834pHMig==
   dependencies:
     is-redirect "^1.0.0"
     pify "^5.0.0"

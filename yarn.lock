@@ -1326,10 +1326,10 @@ puppeteer-core@^5.4.1:
     unbzip2-stream "^1.3.3"
     ws "^7.2.3"
 
-puppeteer-extra-plugin-stealth@^2.6.2:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-stealth/-/puppeteer-extra-plugin-stealth-2.6.2.tgz#45072b8074f92c46d3017ef5e6516c11fe82e3e5"
-  integrity sha512-kNmPjE/HV5VW/bEeUoUDpvJpBygrFJTKPAp6ENxYlMCwUbGyDVU/wCPOeyTtowJcTWpzvGYjOfkN9U2ft49ojA==
+puppeteer-extra-plugin-stealth@^2.6.3:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra-plugin-stealth/-/puppeteer-extra-plugin-stealth-2.6.3.tgz#907ce7008bf31450578624b14a87955951c5099c"
+  integrity sha512-gtXffFzV4lxYUyRzKYCvMlcLLZyjdviEsqwNonNAXfAb145CYBMQ0y03uEfjhWawt6tYjYlyZIZHAKKB/X/N6w==
   dependencies:
     debug "^4.1.1"
     puppeteer-extra-plugin "^3.1.7"

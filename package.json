@@ -40,7 +40,7 @@
     "puppeteer-extra-plugin-stealth": "^2.6.5",
     "tough-cookie": "^4.0.0",
     "which": "^2.0.2",
-    "yargs": "^16.1.0"
+    "yargs": "^16.1.1"
   },
   "devDependencies": {
     "@types/configstore": "^4.0.0",

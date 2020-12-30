@@ -33,7 +33,7 @@
     "configstore": "^5.0.1",
     "inquirer": "^7.3.3",
     "option-t": "^24.1.0",
-    "ora": "^5.1.0",
+    "ora": "^5.2.0",
     "p-retry": "^4.2.0",
     "puppeteer-core": "^5.5.0",
     "puppeteer-extra": "^3.1.15",

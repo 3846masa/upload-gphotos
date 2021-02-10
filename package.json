@@ -35,7 +35,7 @@
     "option-t": "^24.1.0",
     "ora": "^5.3.0",
     "p-retry": "^4.3.0",
-    "puppeteer-core": "^7.0.3",
+    "puppeteer-core": "^7.0.4",
     "puppeteer-extra": "^3.1.16",
     "puppeteer-extra-plugin-stealth": "^2.7.4",
     "tough-cookie": "^4.0.0",

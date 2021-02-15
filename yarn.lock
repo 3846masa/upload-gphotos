@@ -1365,10 +1365,10 @@ puppeteer-extra-plugin@^3.1.8:
     debug "^4.1.1"
     merge-deep "^3.0.1"
 
-puppeteer-extra@^3.1.16:
-  version "3.1.16"
-  resolved "https://registry.yarnpkg.com/puppeteer-extra/-/puppeteer-extra-3.1.16.tgz#7e577a34da4a406f8f7b707f222bd5addf20acc6"
-  integrity sha512-7XpScQH1n2Qx5CBZFizAi3HsKoRY8kgVntVg7P/QNiOVvLwcXTi5r3j8Dg25xj2Ga6p7PdWzqY21c4v4C42+Yg==
+puppeteer-extra@^3.1.17:
+  version "3.1.17"
+  resolved "https://registry.yarnpkg.com/puppeteer-extra/-/puppeteer-extra-3.1.17.tgz#873114efb7e2508eff232558f3429c5edc863e51"
+  integrity sha512-KkrIEZGuQ1uqRK9wo0hIGEspGPlYHQIr31MQcbVy4l3RBCICdNbGpKH5TIyvTwSuuqjjGl62gFq5Naa51OpYsA==
   dependencies:
     "@types/debug" "^4.1.0"
     "@types/puppeteer" "^2.0.0"

@@ -72,7 +72,8 @@ async function signinViaPuppeteer({ username, password, jar }: LoginParams) {
 
     await $password.type(password);
     await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), $password.press('Enter')]);
-
+    await page.goto("https://photos.google.com");
+    
     const cookies = await page.cookies();
     await Promise.all(cookies.map((cookie) => setCookie({ cookie, jar, url: page.url() })));
   } finally {

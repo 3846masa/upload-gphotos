@@ -54,7 +54,7 @@ async function signinViaPuppeteer({ username, password, jar }: LoginParams) {
 
     await Promise.all([
       page.waitForSelector('input[type="email"]', { visible: true }),
-      page.goto('https://accounts.google.com/ServiceLogin', { waitUntil: 'networkidle2' }),
+      page.goto('https://photos.google.com/login', { waitUntil: 'networkidle2' }),
     ]);
 
     const $email = await page.$('input[type="email"]');

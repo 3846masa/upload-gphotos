@@ -43,7 +43,7 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "@types/configstore": "^4.0.0",
+    "@types/configstore": "^5.0.0",
     "@types/inquirer": "^7.3.1",
     "@types/node": "^12.20.6",
     "@types/puppeteer-core": "^5.4.0",

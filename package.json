@@ -34,7 +34,7 @@
     "inquirer": "^8.0.0",
     "option-t": "^25.0.4",
     "ora": "^5.4.0",
-    "p-retry": "^4.4.0",
+    "p-retry": "^4.5.0",
     "puppeteer-core": "^7.0.3",
     "puppeteer-extra": "^3.1.18",
     "puppeteer-extra-plugin-stealth": "^2.7.6",

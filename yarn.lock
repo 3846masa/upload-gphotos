@@ -1289,10 +1289,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-option-t@^25.0.6:
-  version "25.0.6"
-  resolved "https://registry.yarnpkg.com/option-t/-/option-t-25.0.6.tgz#dff3d9f6fe953ad4eccc70f8499c79065bbcb512"
-  integrity sha512-cYXhUxox1dP9iXPPh/3NEBGCI+BiZRpr5I81ZZWGjpzovZi/jhr26ko8QTO/wjib796AU7lwrzTLQYZeEUctbg==
+option-t@^25.2.0:
+  version "25.2.0"
+  resolved "https://registry.yarnpkg.com/option-t/-/option-t-25.2.0.tgz#ea7f5cce6a9779ed33a2a4945ac6ebf8c5c8f7e9"
+  integrity sha512-Gra/kEIsN2al0MdJANTQYzh2eoap+kYLpTpCBN9F5wOmK8RVknfr8e572jp9Mfv/Fw7h4nPXQ0wTL2sUJjzCtA==
 
 optionator@^0.8.1:
   version "0.8.3"

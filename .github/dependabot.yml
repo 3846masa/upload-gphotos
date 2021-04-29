@@ -1,0 +1,29 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "20:00"
+    timezone: Asia/Tokyo
+  open-pull-requests-limit: 10
+  versioning-strategy: increase
+  ignore:
+  - dependency-name: "@types/node"
+    versions:
+    - ">= 13.0.0"
+  - dependency-name: puppeteer-core
+    versions:
+    - 7.0.4
+    - 7.1.0
+    - 8.0.0
+  - dependency-name: typescript
+    versions:
+    - 4.1.3
+    - 4.1.4
+    - 4.1.5
+    - 4.2.2
+    - 4.2.3
+  - dependency-name: "@types/yargs"
+    versions:
+    - 16.0.0

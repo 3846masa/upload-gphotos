@@ -1,5 +1,15 @@
 # upload-gphotos
 
+**THIS LIBRARY HAS BEEN DEPRECATED**
+
+Starting June 1, 2021, you will no longer be able to upload an unlimited number of images to Google Photos.
+
+We are deprecating this library as it no longer fulfills its primary purpose.
+
+If you wish to upload images to Google Photos in the future, please use the official API.
+
+---
+
 [![NPM](https://nodei.co/npm/upload-gphotos.png?compact=true)](https://nodei.co/npm/upload-gphotos/)
 
 [![NPM VERSION](https://flat.badgen.net/npm/v/upload-gphotos?icon=npm)](https://www.npmjs.com/package/upload-gphotos)
